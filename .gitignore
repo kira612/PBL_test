@@ -1,0 +1,181 @@
+# Byte-compiled / optimized / DLL files (バイトコンパイル済み/最適化済み/DLLファイル)
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions (C拡張)
+*.so
+
+# Distribution / packaging (配布/パッケージング)
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller (PyInstaller)
+*.manifest
+*.spec
+
+# Installer logs (インストーラーログ)
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports (単体テスト/カバレッジレポート)
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Translations (翻訳)
+*.mo
+*.pot
+
+# Django stuff (Django関連)
+*.log
+local_settings.py
+db.sqlite3
+
+# Flask stuff (Flask関連)
+instance/
+.webassets-cache
+
+# Scrapy stuff (Scrapy関連)
+.scrapy
+
+# Sphinx documentation (Sphinxドキュメント)
+docs/_build/
+
+# PyBuilder (PyBuilder)
+target/
+
+# Jupyter Notebook (Jupyter Notebook)
+.ipynb_checkpoints
+
+# pyenv (pyenv)
+.python-version
+
+# celery beat schedule file (celeryビートスケジュールファイル)
+celerybeat-schedule
+
+# SageMath parsed files (SageMath解析済みファイル)
+*.sage.py
+
+# Environments (環境変数)
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings (Spyderプロジェクト設定)
+.spyderproject
+.spyproject
+
+# Rope project settings (Ropeプロジェクト設定)
+.ropeproject
+
+# mkdocs documentation (mkdocsドキュメント)
+/site
+
+# mypy (mypy)
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker (Pyre型チェッカー)
+.pyre/
+
+# Docker (Docker)
+.dockerignore
+docker-compose.override.yml
+
+# IDE files (IDE関連ファイル)
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files (OS生成ファイル)
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Camera and video files (カメラと動画ファイル)
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.wmv
+*.flv
+*.webm
+
+# Image files (画像ファイル)
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.bmp
+*.tiff
+*.tif
+
+# Model files (モデルファイル)
+*.pth
+*.pt
+*.onnx
+*.pkl
+*.h5
+*.pb
+*.tflite
+
+# Data files (データファイル)
+data/
+datasets/
+logs/
+output/
+results/
+checkpoints/
+
+# Temporary files (一時ファイル)
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Configuration files with sensitive data (機密データを含む設定ファイル)
+config/local.yml
+config/secrets.yml
+.env.local
+.env.production
+
+# Research specific (研究特有)
+experiments/
+models/
+weights/
+annotations/
+recordings/

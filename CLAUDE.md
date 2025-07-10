@@ -174,6 +174,235 @@ PBL_test/
 
 ## Git Workflow（Gitワークフロー）
 
+### Branch Strategy（ブランチ戦略）
+
+This project uses a feature-branch workflow with the following structure:
+このプロジェクトは以下の構造を持つフィーチャーブランチワークフローを使用します：
+
+```
+main (本番・安定版)
+├── future (開発統合ブランチ)
+│   ├── feature/person-detection-enhancement
+│   ├── feature/position-estimation-improvement
+│   ├── feature/action-recognition-expansion
+│   ├── feature/web-dashboard
+│   ├── feature/multi-camera-support
+│   ├── feature/face-recognition
+│   └── feature/entry-exit-management
+├── hotfix/critical-bug-fix
+└── release/v1.0.0
+```
+
+#### Branch Types（ブランチタイプ）
+
+1. **main**: 本番環境用の安定版（Production-ready stable version）
+   - 完全にテスト済みのコード（Fully tested code）
+   - ドキュメント完全同期（Documentation fully synchronized）
+   - リリース可能な状態（Ready for release）
+
+2. **future**: 開発統合ブランチ（Development integration branch）
+   - 新機能の統合テスト（Integration testing for new features）
+   - フィーチャーブランチのマージ先（Target for feature branch merges）
+   - 次期リリースの準備（Preparation for next release）
+
+3. **feature/**: 機能開発ブランチ（Feature development branches）
+   - 個別機能の開発（Individual feature development）
+   - `future`ブランチから分岐（Branched from `future`）
+   - テスト合格後に`future`にマージ（Merged to `future` after tests pass）
+
+4. **hotfix/**: 緊急修正ブランチ（Emergency fix branches）
+   - 本番環境の緊急修正（Critical production fixes）
+   - `main`ブランチから分岐（Branched from `main`）
+   - 修正後に`main`と`future`両方にマージ（Merged to both `main` and `future`）
+
+5. **release/**: リリース準備ブランチ（Release preparation branches）
+   - リリース前の最終調整（Final adjustments before release）
+   - バージョン番号更新（Version number updates）
+   - リリースノート作成（Release notes creation）
+
+### Development Workflow（開発ワークフロー）
+
+#### Step 1: Feature Development Start（機能開発開始）
+
+```bash
+# Switch to future branch（futureブランチに切り替え）
+git checkout future
+git pull origin future
+
+# Create new feature branch（新しいフィーチャーブランチを作成）
+git checkout -b feature/your-feature-name
+
+# Example feature branches:
+# git checkout -b feature/person-detection-enhancement
+# git checkout -b feature/position-estimation-improvement
+# git checkout -b feature/action-recognition-expansion
+```
+
+#### Step 2: Development Process（開発プロセス）
+
+```bash
+# Make your changes（変更を行う）
+# ... code development ...
+
+# IMPORTANT: Update documentation with code changes
+# 重要：コード変更と合わせてドキュメントを更新
+# Update docs/API_Documentation.md
+# Update docs/Usage_Guide.md
+# Update docs/System_Architecture.md
+
+# Stage all changes（全ての変更をステージ）
+git add .
+
+# Commit with proper message（適切なメッセージでコミット）
+git commit -m "Add feature X with updated documentation
+
+- Implement feature X in module Y
+- Update API documentation for new functions
+- Add usage examples and configuration options
+- Update system architecture diagram
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>"
+```
+
+#### Step 3: Testing and Quality Assurance（テストと品質保証）
+
+```bash
+# Run all tests（全てのテストを実行）
+docker-compose exec app python -m pytest
+
+# Run code quality checks（コード品質チェックを実行）
+docker-compose exec app python -m ruff format .
+docker-compose exec app python -m ruff check .
+docker-compose exec app python -m pyright
+
+# Test the feature manually（機能を手動でテスト）
+docker-compose exec app python main.py --debug
+
+# Verify documentation accuracy（ドキュメントの正確性を検証）
+# Check that all examples work
+# Verify API documentation matches code
+```
+
+#### Step 4: Push and Pull Request（プッシュとプルリクエスト）
+
+```bash
+# Push feature branch（フィーチャーブランチをプッシュ）
+git push origin feature/your-feature-name
+
+# Create Pull Request on GitHub（GitHubでプルリクエストを作成）
+# Target: future branch
+# Include:
+# - Feature description
+# - Testing results
+# - Documentation updates
+# - Breaking changes (if any)
+```
+
+#### Step 5: Code Review and Merge（コードレビューとマージ）
+
+```bash
+# After PR approval, merge to future（PR承認後、futureにマージ）
+git checkout future
+git pull origin future
+git merge --no-ff feature/your-feature-name
+
+# Push updated future branch（更新されたfutureブランチをプッシュ）
+git push origin future
+
+# Delete feature branch（フィーチャーブランチを削除）
+git branch -d feature/your-feature-name
+git push origin --delete feature/your-feature-name
+```
+
+#### Step 6: Release to Main（メインへのリリース）
+
+```bash
+# When ready for release（リリース準備完了時）
+git checkout main
+git pull origin main
+
+# Merge future to main（futureをmainにマージ）
+git merge --no-ff future
+
+# Tag the release（リリースにタグを付ける）
+git tag -a v1.1.0 -m "Release version 1.1.0
+
+- Enhanced person detection accuracy
+- Improved position estimation algorithms
+- Added new action recognition patterns
+- Updated documentation and examples"
+
+# Push main and tags（mainとタグをプッシュ）
+git push origin main
+git push origin --tags
+```
+
+### Feature Branch Naming Convention（フィーチャーブランチ命名規則）
+
+Use descriptive names that clearly indicate the feature being developed:
+開発中の機能を明確に示す説明的な名前を使用：
+
+```bash
+# Core functionality improvements（コア機能改善）
+feature/person-detection-enhancement
+feature/position-estimation-improvement
+feature/action-recognition-expansion
+
+# New major features（新しい主要機能）
+feature/web-dashboard
+feature/multi-camera-support
+feature/face-recognition
+feature/entry-exit-management
+
+# Performance and optimization（パフォーマンスと最適化）
+feature/gpu-acceleration
+feature/real-time-optimization
+feature/memory-usage-improvement
+
+# Research and experimental（研究と実験的機能）
+feature/deep-learning-integration
+feature/3d-pose-estimation
+feature/behavior-pattern-analysis
+
+# Infrastructure and tools（インフラとツール）
+feature/ci-cd-pipeline
+feature/automated-testing
+feature/deployment-scripts
+```
+
+### Quality Gates（品質ゲート）
+
+Before merging any feature branch to `future`:
+任意のフィーチャーブランチを`future`にマージする前に：
+
+#### Required Tests（必須テスト）
+- [ ] All unit tests pass（全ユニットテストが合格）
+- [ ] Integration tests pass（統合テストが合格）
+- [ ] Manual feature testing completed（手動機能テストが完了）
+- [ ] Performance regression tests pass（パフォーマンス回帰テストが合格）
+
+#### Code Quality（コード品質）
+- [ ] Ruff formatting check passes（Ruffフォーマットチェックが合格）
+- [ ] Ruff linting check passes（Ruffリンティングチェックが合格）
+- [ ] Type checking (pyright) passes（型チェック（pyright）が合格）
+- [ ] No security vulnerabilities（セキュリティ脆弱性なし）
+
+#### Documentation Quality（ドキュメント品質）
+- [ ] API documentation updated and accurate（APIドキュメントが更新され正確）
+- [ ] Usage examples tested and working（使用例がテスト済みで動作）
+- [ ] Architecture documentation reflects changes（アーキテクチャドキュメントが変更を反映）
+- [ ] README updated if needed（必要に応じてREADMEが更新）
+
+#### Research Validation（研究検証）
+- [ ] Accuracy metrics documented（精度メトリクスが文書化）
+- [ ] Performance benchmarks recorded（パフォーマンスベンチマークが記録）
+- [ ] Comparison with existing methods（既存手法との比較）
+- [ ] Research implications documented（研究への影響が文書化）
+
+### Commit Message Convention（コミットメッセージ規則）
+
 - For commits fixing bugs or adding features based on user reports add:
   （ユーザーレポートに基づくバグ修正や機能追加のコミット時に追加）
   ```bash
@@ -186,6 +415,58 @@ PBL_test/
   ```bash
   git commit --trailer "Github-Issue:#<number>"
   ```
+
+- For feature development commits（機能開発コミット用）:
+  ```bash
+  git commit -m "feature: add new person detection algorithm
+
+  - Implement YOLO v8 integration
+  - Update API documentation
+  - Add configuration options
+  - Include performance benchmarks
+  
+  🤖 Generated with [Claude Code](https://claude.ai/code)
+  
+  Co-Authored-By: Claude <noreply@anthropic.com>"
+  ```
+
+### Emergency Hotfix Workflow（緊急修正ワークフロー）
+
+For critical production issues:
+重要な本番環境の問題について：
+
+```bash
+# Create hotfix branch from main（mainからhotfixブランチを作成）
+git checkout main
+git pull origin main
+git checkout -b hotfix/critical-issue-description
+
+# Make the fix（修正を行う）
+# ... fix the issue ...
+
+# Test the fix（修正をテスト）
+# Run focused tests for the fixed issue
+
+# Commit the fix（修正をコミット）
+git commit -m "hotfix: fix critical issue X
+
+- Fix security vulnerability in module Y
+- Add regression test
+- Update documentation
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>"
+
+# Push and create PR to main（プッシュしてmainへのPRを作成）
+git push origin hotfix/critical-issue-description
+
+# After merge to main, also merge to future（mainへのマージ後、futureにもマージ）
+git checkout future
+git pull origin future
+git merge main
+git push origin future
+```
 
 ## Documentation Update Guidelines（ドキュメント更新ガイドライン）
 

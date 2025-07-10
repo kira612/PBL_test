@@ -1,0 +1,41 @@
+# 研究室向けカメラベース監視システム設定ファイル
+# Laboratory Camera-based Monitoring System Configuration
+
+# カメラ設定 (Camera Configuration)
+camera:
+  camera_id: 0        # カメラデバイスID (Camera device ID)
+  width: 640          # フレーム幅 (Frame width)
+  height: 480         # フレーム高さ (Frame height)
+  fps: 30             # フレームレート (Frame rate)
+
+# 部屋設定 (Room Configuration)
+room:
+  width: 4.0          # 部屋の幅 (meters) (Room width in meters)
+  height: 3.0         # 部屋の奥行き (meters) (Room depth in meters)
+  camera_height: 2.5  # カメラの高さ (meters) (Camera height in meters)
+
+# 検出設定 (Detection Configuration)
+detection:
+  method: "yolo"                    # 検出方法: "yolo" または "mediapipe"
+  confidence_threshold: 0.6         # 検出信頼度閾値 (Detection confidence threshold)
+  yolo_model_path: "yolov8n.pt"     # YOLOモデルファイルパス
+
+# 位置推定設定 (Position Estimation Configuration)
+position:
+  method: "bbox_center"             # 位置推定方法
+                                   # "bbox_center": バウンディングボックス中心ベース
+                                   # "perspective_mapping": 透視変換ベース
+                                   # "depth_estimation": 深度推定ベース
+  calibration_points: null         # 透視変換用較正点 (For perspective mapping)
+
+# 行動認識設定 (Action Recognition Configuration)
+action:
+  use_pose: true                   # 姿勢ベース認識を使用するか
+  confidence_threshold: 0.3        # 行動認識信頼度閾値
+
+# システム設定 (System Configuration)
+system:
+  display_enabled: true            # リアルタイム表示を有効化
+  save_results: false              # 結果をファイルに保存するか
+  output_directory: "output"       # 出力ディレクトリ
+  log_level: "INFO"               # ログレベル: DEBUG, INFO, WARNING, ERROR

@@ -179,3 +179,35 @@ models/
 weights/
 annotations/
 recordings/
+
+# VS Code devcontainer (but keep configuration)
+.devcontainer/.env
+.devcontainer/docker-compose.yml
+
+# Keep important config files
+!config.yaml
+!config.json
+!requirements*.txt
+!docker-compose.yml
+!Dockerfile
+!.devcontainer/devcontainer.json
+
+# YOLO model files (downloaded automatically)
+yolo*.pt
+yolo*.onnx
+
+# Build artifacts
+*.egg-info/
+build/
+dist/
+
+# Cache
+.cache/
+cache/
+
+# Logs with timestamps
+*.log.*
+logs/
+
+# Git merge artifacts
+*.orig

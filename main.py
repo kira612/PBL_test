@@ -95,18 +95,36 @@ async def run_monitoring_system(camera_id: int, config: Optional[Path]) -> None:
     Run the main monitoring system loop.
     (メイン監視システムループの実行)
     """
-    # TODO: Implement the actual monitoring system
-    # TODO: 実際の監視システムを実装
+    from src.core.coordinator import MonitoringCoordinator
+    from src.core.detector import DetectionMethod
+    from src.vision.position_estimator import PositionMethod
     
     logger.info("Monitoring system is running...")
     logger.info("監視システムが実行中です...")
     
-    # Placeholder for the main system loop
-    # (メインシステムループのプレースホルダー)
-    while True:
-        await asyncio.sleep(1)
-        # TODO: Add actual monitoring logic here
-        # TODO: ここに実際の監視ロジックを追加
+    # Initialize monitoring coordinator
+    coordinator = MonitoringCoordinator(
+        camera_id=camera_id,
+        config_path=config,
+        detection_method=DetectionMethod.YOLO,  # Can be changed to MEDIAPIPE
+        position_method=PositionMethod.BBOX_CENTER  # Can be changed to PERSPECTIVE_MAPPING
+    )
+    
+    # Initialize system components
+    if not await coordinator.initialize():
+        logger.error("Failed to initialize monitoring system")
+        logger.error("監視システムの初期化に失敗しました")
+        return
+    
+    try:
+        # Start the monitoring loop
+        await coordinator.start_monitoring()
+    except Exception as e:
+        logger.error(f"Monitoring system error: {e}")
+        logger.error(f"監視システムエラー: {e}")
+    finally:
+        # Ensure proper cleanup
+        await coordinator.stop_monitoring()
 
 
 if __name__ == "__main__":

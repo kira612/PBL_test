@@ -186,3 +186,206 @@ PBL_test/
   ```bash
   git commit --trailer "Github-Issue:#<number>"
   ```
+
+## Documentation Update Guidelines（ドキュメント更新ガイドライン）
+
+### CRITICAL: Documentation Synchronization（重要：ドキュメント同期）
+
+**When making code changes that affect the API or system behavior, you MUST update the documentation before pushing to GitHub.**
+**APIやシステム動作に影響するコード変更を行う際は、GitHubにpushする前に必ずドキュメントを更新してください。**
+
+### Required Documentation Updates（必須ドキュメント更新）
+
+1. **API Changes（API変更時）**
+   - Update `docs/API_Documentation.md` when:
+     - Adding new functions, classes, or methods（新しい関数、クラス、メソッドを追加）
+     - Changing function signatures（関数シグネチャを変更）
+     - Modifying return values or parameters（戻り値やパラメータを変更）
+     - Adding or removing modules（モジュールを追加または削除）
+
+2. **Architecture Changes（アーキテクチャ変更時）**
+   - Update `docs/System_Architecture.md` when:
+     - Adding new modules or components（新しいモジュールやコンポーネントを追加）
+     - Changing data flow or module interactions（データフローやモジュール間の相互作用を変更）
+     - Modifying system design patterns（システム設計パターンを変更）
+     - Performance characteristics change（パフォーマンス特性が変更）
+
+3. **Usage Changes（使用方法変更時）**
+   - Update `docs/Usage_Guide.md` when:
+     - Adding new command-line options（新しいコマンドラインオプションを追加）
+     - Changing configuration file format（設定ファイル形式を変更）
+     - Modifying installation requirements（インストール要件を変更）
+     - Adding new features accessible to users（ユーザーがアクセス可能な新機能を追加）
+
+4. **Main README Updates（メインREADME更新時）**
+   - Update `README.md` when:
+     - Adding major new features（主要な新機能を追加）
+     - Changing system requirements（システム要件を変更）
+     - Modifying installation or usage instructions（インストールまたは使用方法を変更）
+     - Updating project structure significantly（プロジェクト構造を大幅に更新）
+
+### Documentation Update Process（ドキュメント更新プロセス）
+
+#### Step 1: Code Change Analysis（ステップ1：コード変更分析）
+Before making any commit, analyze your changes:
+コミットする前に、変更を分析してください：
+
+```bash
+# Review what you've changed
+git diff
+
+# Check which files were modified
+git status
+```
+
+#### Step 2: Identify Required Documentation Updates（ステップ2：必要なドキュメント更新の特定）
+Based on your code changes, determine which documentation files need updates:
+コード変更に基づいて、どのドキュメントファイルを更新する必要があるかを決定：
+
+- **New/Modified Functions** → Update `docs/API_Documentation.md`
+- **New Modules/Classes** → Update both API docs and Architecture docs
+- **Configuration Changes** → Update Usage Guide and config examples
+- **New Features** → Update all relevant documentation
+
+#### Step 3: Update Documentation（ステップ3：ドキュメント更新）
+Update the identified documentation files BEFORE committing:
+コミットする前に特定されたドキュメントファイルを更新：
+
+```bash
+# Edit the relevant documentation files
+vim docs/API_Documentation.md
+vim docs/Usage_Guide.md
+vim docs/System_Architecture.md
+
+# Update README.md if needed
+vim README.md
+
+# Update configuration examples if needed
+vim config.yaml
+```
+
+#### Step 4: Verify Documentation Accuracy（ステップ4：ドキュメント精度の検証）
+Before committing, ensure:
+コミット前に以下を確認：
+
+- [ ] All function signatures match the actual code（全ての関数シグネチャが実際のコードと一致）
+- [ ] Parameter types and descriptions are accurate（パラメータの型と説明が正確）
+- [ ] Return value documentation is correct（戻り値のドキュメントが正確）
+- [ ] Usage examples work with the new code（使用例が新しいコードで動作）
+- [ ] Architecture diagrams reflect current design（アーキテクチャ図が現在の設計を反映）
+
+#### Step 5: Commit Everything Together（ステップ5：全てを一緒にコミット）
+Commit both code and documentation changes in the same commit:
+コードとドキュメントの変更を同じコミットで行う：
+
+```bash
+# Stage all changes (code + documentation)
+git add .
+
+# Commit with descriptive message
+git commit -m "Add new feature X with updated documentation
+
+- Implement new feature X in module Y
+- Update API documentation for new functions
+- Add usage examples to Usage Guide
+- Update system architecture diagram
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>"
+```
+
+### Documentation Quality Standards（ドキュメント品質基準）
+
+1. **Accuracy（正確性）**
+   - Documentation must exactly match the code（ドキュメントはコードと完全に一致する必要がある）
+   - No outdated examples or incorrect signatures（古い例や不正確なシグネチャは禁止）
+
+2. **Completeness（完全性）**
+   - All public APIs must be documented（全てのパブリックAPIを文書化）
+   - Include both Japanese and English descriptions（日本語と英語の両方の説明を含む）
+   - Provide working examples（動作する例を提供）
+
+3. **Clarity（明確性）**
+   - Use clear, concise language（明確で簡潔な言語を使用）
+   - Provide context for complex operations（複雑な操作にはコンテキストを提供）
+   - Include troubleshooting information（トラブルシューティング情報を含む）
+
+### Automated Documentation Checks（自動ドキュメントチェック）
+
+To help maintain documentation quality, always run these checks before pushing:
+ドキュメント品質を維持するため、push前に必ず以下のチェックを実行：
+
+```bash
+# Check that all public functions have docstrings
+python -c "import ast; import sys; [print(f'Missing docstring: {node.name}') for file in sys.argv[1:] for node in ast.walk(ast.parse(open(file).read())) if isinstance(node, ast.FunctionDef) and not ast.get_docstring(node) and not node.name.startswith('_')]" src/**/*.py
+
+# Verify configuration examples are valid
+python -c "import yaml; yaml.safe_load(open('config.yaml'))"
+
+# Check for broken internal links in documentation
+grep -r "\[.*\](docs/" docs/ || echo "No internal links found"
+```
+
+### Pre-Push Checklist（Push前チェックリスト）
+
+Before pushing to GitHub, verify:
+GitHubにpushする前に以下を確認：
+
+- [ ] Code changes are complete and tested（コード変更が完了しテスト済み）
+- [ ] All affected documentation has been updated（影響を受ける全てのドキュメントが更新済み）
+- [ ] API documentation matches current code signatures（APIドキュメントが現在のコードシグネチャと一致）
+- [ ] Usage examples have been tested（使用例がテスト済み）
+- [ ] README.md reflects current capabilities（README.mdが現在の機能を反映）
+- [ ] Configuration examples are valid（設定例が有効）
+- [ ] Both Japanese and English documentation updated（日本語と英語の両方のドキュメントが更新済み）
+
+### Documentation Maintenance（ドキュメントメンテナンス）
+
+Regular documentation maintenance tasks:
+定期的なドキュメントメンテナンスタスク：
+
+1. **Monthly Review（月次レビュー）**
+   - Review all documentation for accuracy（精度についてすべてのドキュメントをレビュー）
+   - Update performance benchmarks if needed（必要に応じてパフォーマンスベンチマークを更新）
+   - Verify all examples still work（すべての例がまだ動作することを確認）
+
+2. **Version Updates（バージョン更新）**
+   - Update version numbers in all relevant files（関連するすべてのファイルでバージョン番号を更新）
+   - Review and update roadmap in README（READMEのロードマップをレビューして更新）
+   - Update compatibility information（互換性情報を更新）
+
+**REMEMBER: Documentation is as important as code for research projects. Outdated documentation can invalidate research results and waste time for users.**
+**注意：ドキュメントは研究プロジェクトにおいてコードと同じくらい重要です。古いドキュメントは研究結果を無効にし、ユーザーの時間を無駄にする可能性があります。**
+
+# important-instruction-reminders
+Do what has been asked; nothing more, nothing less.
+NEVER create files unless they're absolutely necessary for achieving your goal.
+ALWAYS prefer editing an existing file to creating a new one.
+
+## Documentation Synchronization Override（ドキュメント同期の例外）
+
+**IMPORTANT EXCEPTION: When making code changes that affect APIs, system behavior, or user interface, you MUST automatically update the relevant documentation files WITHOUT being explicitly asked.**
+**重要な例外：API、システム動作、ユーザーインターフェースに影響するコード変更を行う際は、明示的に要求されなくても関連するドキュメントファイルを自動的に更新する必要があります。**
+
+This overrides the general rule about not creating documentation proactively because:
+以下の理由により、ドキュメントを積極的に作成しないという一般ルールを上書きします：
+
+1. **Research Integrity**: Outdated documentation can invalidate research results
+   （研究の整合性：古いドキュメントは研究結果を無効にする可能性）
+2. **User Safety**: Incorrect API documentation can cause system failures
+   （ユーザーの安全性：不正確なAPIドキュメントはシステム障害を引き起こす可能性）
+3. **Project Sustainability**: Synchronized documentation is essential for long-term maintenance
+   （プロジェクトの持続可能性：同期されたドキュメントは長期メンテナンスに不可欠）
+
+**Required Actions When Modifying Code:**
+**コード変更時の必須アクション：**
+
+- If you add/modify/remove functions → Update `docs/API_Documentation.md`
+- If you change system architecture → Update `docs/System_Architecture.md`  
+- If you modify usage patterns → Update `docs/Usage_Guide.md`
+- If you add major features → Update `README.md`
+- If you change configuration → Update `config.yaml` and usage docs
+
+**Always commit code and documentation changes together in a single commit.**
+**コードとドキュメントの変更は常に単一のコミットで一緒にコミットしてください。**

@@ -1,6 +1,6 @@
 """
 Action recognition module for laboratory monitoring.
-(v��n_�nLՍX����)
+(研究室監視のための行動認識モジュール)
 """
 
 import time
@@ -29,7 +29,7 @@ class ActionType(Enum):
 class ActionResult:
     """
     Action recognition result.
-    (LՍXP�)
+    (行動認識結果)
     """
     action_type: ActionType
     confidence: float
@@ -41,7 +41,7 @@ class ActionResult:
 class PoseActionRecognizer:
     """
     Action recognizer using pose landmarks.
-    (���������(W_LՍXh)
+    (ポーズランドマークを使用した行動認識器)
     """
     
     def __init__(self):
@@ -50,7 +50,7 @@ class PoseActionRecognizer:
         self.computer_interaction_threshold = 0.7  # Threshold for computer interaction
         
         # MediaPipe pose landmark indices
-        # (MediaPipe�����������ï�)
+        # (MediaPipeポーズランドマークインデックス)
         self.landmark_indices = {
             'nose': 0,
             'left_eye': 1,
@@ -74,14 +74,14 @@ class PoseActionRecognizer:
     def recognize_action(self, pose: PersonPose, frame_shape: Tuple[int, int]) -> ActionResult:
         """
         Recognize action from pose landmarks.
-        (��������K�LՒ�X)
+        (ポーズランドマークから行動認識)
         
         Args:
-            pose: Person pose information (�i���1)
-            frame_shape: Frame shape (height, width) (����b�)
+            pose: Person pose information (人物ポーズ情報)
+            frame_shape: Frame shape (height, width) (フレーム形状)
             
         Returns:
-            ActionResult: Action recognition result (LՍXP�)
+            ActionResult: Action recognition result (行動認識結果)
         """
         height, width = frame_shape
         landmarks = pose.landmarks
@@ -142,7 +142,7 @@ class PoseActionRecognizer:
     ) -> Dict[str, Tuple[float, float]]:
         """
         Extract key landmarks with good visibility.
-        (o}j�'�d�����������)
+        (良好な可視性を持つキーランドマークを抽出)
         """
         key_landmarks = {}
         
@@ -157,7 +157,7 @@ class PoseActionRecognizer:
     def _analyze_sitting_pose(self, landmarks: Dict[str, Tuple[float, float]]) -> float:
         """
         Analyze sitting pose characteristics.
-        (�cfD���ny���)
+        (座位姿勢の特徴を分析)
         """
         confidence = 0.0
         
@@ -199,7 +199,7 @@ class PoseActionRecognizer:
     def _analyze_standing_pose(self, landmarks: Dict[str, Tuple[float, float]]) -> float:
         """
         Analyze standing pose characteristics.
-        (�cfD���ny���)
+        (立位姿勢の特徴を分析)
         """
         confidence = 0.0
         
@@ -240,7 +240,7 @@ class PoseActionRecognizer:
     def _analyze_computer_interaction(self, landmarks: Dict[str, Tuple[float, float]]) -> float:
         """
         Analyze computer interaction pose characteristics.
-        (�������\��ny���)
+        (コンピューター操作姿勢の特徴を分析)
         """
         confidence = 0.0
         
@@ -289,7 +289,7 @@ class PoseActionRecognizer:
     def _analyze_walking_pose(self, landmarks: Dict[str, Tuple[float, float]]) -> float:
         """
         Analyze walking pose characteristics.
-        (iL��ny���)
+        (歩行姿勢の特徴を分析)
         """
         confidence = 0.0
         
@@ -327,7 +327,7 @@ class PoseActionRecognizer:
     def _calculate_angle(self, p1: Tuple[float, float], p2: Tuple[float, float], p3: Tuple[float, float]) -> float:
         """
         Calculate angle between three points.
-        (3��nҦ��)
+        (3点間の角度を計算)
         """
         # Vector from p2 to p1
         v1 = (p1[0] - p2[0], p1[1] - p2[1])
@@ -352,7 +352,7 @@ class PoseActionRecognizer:
 class BBoxActionRecognizer:
     """
     Action recognizer using bounding box information.
-    (Ц�ǣ��ï��1�(W_LՍXh)
+    (バウンディングボックス情報を使用した行動認識器)
     """
     
     def __init__(self):
@@ -363,14 +363,14 @@ class BBoxActionRecognizer:
     def recognize_action(self, detection: Detection, frame_shape: Tuple[int, int]) -> ActionResult:
         """
         Recognize action from bounding box information.
-        (Ц�ǣ��ï��1K�LՒ�X)
+        (バウンディングボックス情報から行動認識)
         
         Args:
-            detection: Person detection result (�i�P�)
-            frame_shape: Frame shape (height, width) (����b�)
+            detection: Person detection result (人物検出結果)
+            frame_shape: Frame shape (height, width) (フレーム形状)
             
         Returns:
-            ActionResult: Action recognition result (LՍXP�)
+            ActionResult: Action recognition result (行動認識結果)
         """
         height, width = frame_shape
         x, y, w, h = detection.bbox
@@ -419,7 +419,7 @@ class BBoxActionRecognizer:
     def _analyze_movement(self, current_center: Tuple[int, int]) -> float:
         """
         Analyze movement based on position history.
-        (Mnetk�eO���)
+        (位置履歴に基づく動き解析)
         """
         if len(self.previous_positions) < 3:
             return 0.0
@@ -444,16 +444,16 @@ class BBoxActionRecognizer:
 class ActionRecognizer:
     """
     Unified action recognizer supporting multiple recognition methods.
-    (pn�X�Ւ����Y�qLՍXh)
+    (複数の認識手法をサポートする統合行動認識器)
     """
     
     def __init__(self, use_pose: bool = True):
         """
         Initialize action recognizer.
-        (LՍXhn)
+        (行動認識器の初期化)
         
         Args:
-            use_pose: Whether to use pose-based recognition (������X�(Y�K)
+            use_pose: Whether to use pose-based recognition (ポーズベース認識を使用するか)
         """
         self.use_pose = use_pose
         self.pose_recognizer = PoseActionRecognizer()
@@ -467,15 +467,15 @@ class ActionRecognizer:
     ) -> List[ActionResult]:
         """
         Recognize actions for multiple detections.
-        (pn�k�Y�LՍX)
+        (複数の検出に対する行動認識)
         
         Args:
-            detections: List of person detections (�i�P�n��)
-            poses: List of person poses (�i��n��)
-            frame_shape: Frame shape (height, width) (����b�)
+            detections: List of person detections (人物検出結果のリスト)
+            poses: List of person poses (人物ポーズのリスト)
+            frame_shape: Frame shape (height, width) (フレーム形状)
             
         Returns:
-            List[ActionResult]: List of action recognition results (LՍXP�n��)
+            List[ActionResult]: List of action recognition results (行動認識結果のリスト)
         """
         results = []
         
@@ -499,16 +499,15 @@ class ActionRecognizer:
     ) -> np.ndarray:
         """
         Visualize action recognition results on frame.
-        (����
-kLՍXP���)
+        (フレームに行動認識結果を可視化)
         
         Args:
-            frame: Input frame (e�����)
-            detections: Detection results (�P�)
-            actions: Action recognition results (LՍXP�)
+            frame: Input frame (入力フレーム)
+            detections: Detection results (検出結果)
+            actions: Action recognition results (行動認識結果)
             
         Returns:
-            np.ndarray: Frame with action visualizations (L������)
+            np.ndarray: Frame with action visualizations (行動可視化付きフレーム)
         """
         output_frame = frame.copy()
         

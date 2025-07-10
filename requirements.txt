@@ -14,6 +14,10 @@ torch==2.1.1
 torchvision==0.16.1
 tensorflow==2.15.0
 
+# Advanced depth estimation models (高度な深度推定モデル)
+transformers==4.35.2
+timm==0.9.12
+
 # Image processing and utilities (画像処理とユーティリティ)
 Pillow==10.1.0
 scikit-image==0.22.0

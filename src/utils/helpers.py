@@ -1,6 +1,6 @@
 """
 Helper functions for common operations.
-(q�\n_�n�����p)
+(共通操作のためのヘルパー関数)
 """
 
 import cv2
@@ -19,15 +19,15 @@ def resize_image_keep_aspect(
 ) -> Tuple[np.ndarray, float]:
     """
     Resize image while keeping aspect ratio.
-    (��گ�Ԓ�Wf;ϒ굤�)
+    (アスペクト比を保持して画像をリサイズ)
     
     Args:
-        image: Input image (e�;�)
-        target_width: Target width (�E)
-        target_height: Target height (��U)
+        image: Input image (入力画像)
+        target_width: Target width (目標幅)
+        target_height: Target height (目標高さ)
         
     Returns:
-        Tuple[np.ndarray, float]: Resized image and scale factor (굤�U�_;�h�����p)
+        Tuple[np.ndarray, float]: Resized image and scale factor (リサイズされた画像とスケール係数)
     """
     h, w = image.shape[:2]
     scale = min(target_width / w, target_height / h)
@@ -49,14 +49,14 @@ def resize_image_keep_aspect(
 def calculate_distance(point1: Tuple[float, float], point2: Tuple[float, float]) -> float:
     """
     Calculate Euclidean distance between two points.
-    (2��n���������)
+    (2点間のユークリッド距離を計算)
     
     Args:
-        point1: First point (,1�)
-        point2: Second point (,2�)
+        point1: First point (第1点)
+        point2: Second point (第2点)
         
     Returns:
-        float: Distance (��)
+        float: Distance (距離)
     """
     return np.sqrt((point1[0] - point2[0]) ** 2 + (point1[1] - point2[1]) ** 2)
 
@@ -64,13 +64,13 @@ def calculate_distance(point1: Tuple[float, float], point2: Tuple[float, float])
 def bbox_center(bbox: List[float]) -> Tuple[float, float]:
     """
     Calculate center point of bounding box.
-    (Ц�ǣ��ï�n-ù��)
+    (バウンディングボックスの中心点を計算)
     
     Args:
-        bbox: Bounding box [x1, y1, x2, y2] (Ц�ǣ��ï�)
+        bbox: Bounding box [x1, y1, x2, y2] (バウンディングボックス)
         
     Returns:
-        Tuple[float, float]: Center point (x, y) (-ù)
+        Tuple[float, float]: Center point (x, y) (中心点)
     """
     x1, y1, x2, y2 = bbox
     return (x1 + x2) / 2, (y1 + y2) / 2
@@ -79,13 +79,13 @@ def bbox_center(bbox: List[float]) -> Tuple[float, float]:
 def bbox_area(bbox: List[float]) -> float:
     """
     Calculate area of bounding box.
-    (Ц�ǣ��ï�nbM��)
+    (バウンディングボックスの面積を計算)
     
     Args:
-        bbox: Bounding box [x1, y1, x2, y2] (Ц�ǣ��ï�)
+        bbox: Bounding box [x1, y1, x2, y2] (バウンディングボックス)
         
     Returns:
-        float: Area (bM)
+        float: Area (面積)
     """
     x1, y1, x2, y2 = bbox
     return (x2 - x1) * (y2 - y1)
@@ -94,14 +94,14 @@ def bbox_area(bbox: List[float]) -> float:
 def bbox_iou(bbox1: List[float], bbox2: List[float]) -> float:
     """
     Calculate Intersection over Union (IoU) of two bounding boxes.
-    (2dnЦ�ǣ��ï�nIoU��)
+    (2つのバウンディングボックスのIoUを計算)
     
     Args:
-        bbox1: First bounding box (,1Ц�ǣ��ï�)
-        bbox2: Second bounding box (,2Ц�ǣ��ï�)
+        bbox1: First bounding box (第1バウンディングボックス)
+        bbox2: Second bounding box (第2バウンディングボックス)
         
     Returns:
-        float: IoU value (IoU$)
+        float: IoU value (IoU値)
     """
     x1_1, y1_1, x2_1, y2_1 = bbox1
     x1_2, y1_2, x2_2, y2_2 = bbox2
@@ -126,14 +126,14 @@ def bbox_iou(bbox1: List[float], bbox2: List[float]) -> float:
 def create_output_directory(base_path: str, prefix: str = "run") -> Path:
     """
     Create output directory with timestamp.
-    (��๿���Mn��ǣ���\)
+    (タイムスタンプ付きの出力ディレクトリを作成)
     
     Args:
-        base_path: Base directory path (���ǣ���ѹ)
-        prefix: Directory name prefix (ǣ�����գï�)
+        base_path: Base directory path (ベースディレクトリパス)
+        prefix: Directory name prefix (ディレクトリ名プレフィックス)
         
     Returns:
-        Path: Created directory path (\U�_ǣ���ѹ)
+        Path: Created directory path (作成されたディレクトリパス)
     """
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     output_dir = Path(base_path) / f"{prefix}_{timestamp}"
@@ -144,10 +144,10 @@ def create_output_directory(base_path: str, prefix: str = "run") -> Path:
 def fps_counter():
     """
     Simple FPS counter generator.
-    (����jFPS����������)
+    (シンプルなFPSカウンタージェネレーター)
     
     Yields:
-        float: Current FPS (�(nFPS)
+        float: Current FPS (現在のFPS)
     """
     start_time = time.time()
     frame_count = 0
@@ -176,19 +176,19 @@ def draw_text_with_background(
 ) -> np.ndarray:
     """
     Draw text with background rectangle.
-    (�o�Mƭ�Ȓ�;)
+    (背景付きテキストを描画)
     
     Args:
-        image: Input image (e�;�)
-        text: Text to draw (�;Y�ƭ��)
-        position: Text position (ƭ��Mn)
-        font_scale: Font scale (թ�ȹ���)
-        color: Text color (ƭ��r)
-        bg_color: Background color (�or)
-        thickness: Text thickness (ƭ��*U)
+        image: Input image (入力画像)
+        text: Text to draw (描画するテキスト)
+        position: Text position (テキスト位置)
+        font_scale: Font scale (フォントスケール)
+        color: Text color (テキスト色)
+        bg_color: Background color (背景色)
+        thickness: Text thickness (テキスト太さ)
         
     Returns:
-        np.ndarray: Image with text (ƭ���M;�)
+        np.ndarray: Image with text (テキスト付き画像)
     """
     font = cv2.FONT_HERSHEY_SIMPLEX
     
@@ -218,15 +218,15 @@ def normalize_coordinates(
 ) -> Tuple[float, float]:
     """
     Normalize coordinates to [0, 1] range.
-    (��[0, 1]n��kc�)
+    (座標を[0, 1]の範囲に正規化)
     
     Args:
-        coordinates: Input coordinates (e��)
-        image_width: Image width (;�E)
-        image_height: Image height (;��U)
+        coordinates: Input coordinates (入力座標)
+        image_width: Image width (画像幅)
+        image_height: Image height (画像高さ)
         
     Returns:
-        Tuple[float, float]: Normalized coordinates (c�U�_�)
+        Tuple[float, float]: Normalized coordinates (正規化された座標)
     """
     if isinstance(coordinates, (list, tuple)) and len(coordinates) >= 2:
         x, y = coordinates[0], coordinates[1]
@@ -242,15 +242,15 @@ def denormalize_coordinates(
 ) -> Tuple[int, int]:
     """
     Denormalize coordinates from [0, 1] range to pixel coordinates.
-    ([0, 1]n��K�ԯ��k^c�)
+    ([0, 1]の範囲からピクセル座標に非正規化)
     
     Args:
-        normalized_coords: Normalized coordinates (c�U�_�)
-        image_width: Image width (;�E)
-        image_height: Image height (;��U)
+        normalized_coords: Normalized coordinates (正規化された座標)
+        image_width: Image width (画像幅)
+        image_height: Image height (画像高さ)
         
     Returns:
-        Tuple[int, int]: Pixel coordinates (ԯ��)
+        Tuple[int, int]: Pixel coordinates (ピクセル座標)
     """
     x_norm, y_norm = normalized_coords
     x = int(x_norm * image_width)
@@ -261,15 +261,15 @@ def denormalize_coordinates(
 def apply_clahe(image: np.ndarray, clip_limit: float = 2.0, tile_grid_size: Tuple[int, int] = (8, 8)) -> np.ndarray:
     """
     Apply Contrast Limited Adaptive Histogram Equalization (CLAHE).
-    (�����6Pi�ҹȰ��GI�i()
+    (コントラスト制限適応ヒストグラム均等化を適用)
     
     Args:
-        image: Input image (e�;�)
-        clip_limit: Clipping limit (�����6P)
-        tile_grid_size: Grid size for tiles (���n���ɵ��)
+        image: Input image (入力画像)
+        clip_limit: Clipping limit (クリッピング制限)
+        tile_grid_size: Grid size for tiles (タイルのグリッドサイズ)
         
     Returns:
-        np.ndarray: Enhanced image (7U�_;�)
+        np.ndarray: Enhanced image (強化された画像)
     """
     if len(image.shape) == 3:
         # Convert to LAB color space
@@ -292,15 +292,15 @@ def apply_clahe(image: np.ndarray, clip_limit: float = 2.0, tile_grid_size: Tupl
 def safe_divide(numerator: float, denominator: float, default: float = 0.0) -> float:
     """
     Safe division with default value for zero denominator.
-    (��d�k�Wf�թ��$��Y�hjd�)
+    (ゼロ除算に対してデフォルト値を返す安全な除算)
     
     Args:
-        numerator: Numerator (P)
-        denominator: Denominator (�)
-        default: Default value for zero denominator (��d�Bn�թ��$)
+        numerator: Numerator (分子)
+        denominator: Denominator (分母)
+        default: Default value for zero denominator (ゼロ除算時のデフォルト値)
         
     Returns:
-        float: Division result or default value (d�P�~_o�թ��$)
+        float: Division result or default value (除算結果またはデフォルト値)
     """
     return numerator / denominator if denominator != 0 else default
 
@@ -308,14 +308,14 @@ def safe_divide(numerator: float, denominator: float, default: float = 0.0) -> f
 def clamp(value: float, min_val: float, max_val: float) -> float:
     """
     Clamp value to specified range.
-    ($����k����)
+    (値を指定範囲にクランプ)
     
     Args:
-        value: Input value (e�$)
-        min_val: Minimum value ( $)
-        max_val: Maximum value ( '$)
+        value: Input value (入力値)
+        min_val: Minimum value (最小値)
+        max_val: Maximum value (最大値)
         
     Returns:
-        float: Clamped value (����U�_$)
+        float: Clamped value (クランプされた値)
     """
     return max(min_val, min(value, max_val))

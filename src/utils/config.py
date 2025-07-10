@@ -1,6 +1,6 @@
 """
 Configuration management for the monitoring system.
-(㖷���n-��)
+(監視システムの設定管理)
 """
 
 import json
@@ -73,17 +73,17 @@ class Config:
     def from_file(cls, config_path: Path) -> "Config":
         """
         Load configuration from file.
-        (ա��K�-����)
+        (ファイルから設定を読み込み)
         
         Args:
-            config_path: Path to configuration file (-�ա��nѹ)
+            config_path: Path to configuration file (設定ファイルのパス)
             
         Returns:
-            Config: Configuration instance (-����)
+            Config: Configuration instance (設定インスタンス)
         """
         if not config_path.exists():
             logger.warning(f"Config file not found: {config_path}")
-            logger.warning(f"-�ա��L�dK�~[�: {config_path}")
+            logger.warning(f"設定ファイルが見つかりません: {config_path}")
             return cls.default()
         
         try:
@@ -100,20 +100,20 @@ class Config:
             
         except Exception as e:
             logger.error(f"Failed to load config file: {e}")
-            logger.error(f"-�ա��n��k1W: {e}")
+            logger.error(f"設定ファイルの読み込みに失敗: {e}")
             return cls.default()
     
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "Config":
         """
         Create configuration from dictionary.
-        (��K�-��\)
+        (辞書から設定を作成)
         
         Args:
-            data: Configuration data (-����)
+            data: Configuration data (設定データ)
             
         Returns:
-            Config: Configuration instance (-����)
+            Config: Configuration instance (設定インスタンス)
         """
         try:
             return cls(
@@ -126,17 +126,17 @@ class Config:
             )
         except Exception as e:
             logger.error(f"Failed to create config from dict: {e}")
-            logger.error(f"��K�n-�\k1W: {e}")
+            logger.error(f"辞書から設定の作成に失敗: {e}")
             return cls.default()
     
     @classmethod
     def default(cls) -> "Config":
         """
         Create default configuration.
-        (�թ��-��\)
+        (デフォルト設定を作成)
         
         Returns:
-            Config: Default configuration (�թ��-�)
+            Config: Default configuration (デフォルト設定)
         """
         return cls(
             camera=CameraConfig(),
@@ -150,10 +150,10 @@ class Config:
     def to_dict(self) -> Dict[str, Any]:
         """
         Convert configuration to dictionary.
-        (-����k	�)
+        (設定を辞書に変換)
         
         Returns:
-            Dict[str, Any]: Configuration dictionary (-���)
+            Dict[str, Any]: Configuration dictionary (設定辞書)
         """
         return {
             "camera": asdict(self.camera),
@@ -167,13 +167,13 @@ class Config:
     def save_to_file(self, config_path: Path) -> bool:
         """
         Save configuration to file.
-        (-��ա��k�X)
+        (設定をファイルに保存)
         
         Args:
-            config_path: Path to save configuration (-��Xѹ)
+            config_path: Path to save configuration (設定保存パス)
             
         Returns:
-            bool: Success status (��K)
+            bool: Success status (成功状態)
         """
         try:
             config_path.parent.mkdir(parents=True, exist_ok=True)
@@ -189,22 +189,22 @@ class Config:
                     return False
             
             logger.info(f"Configuration saved to: {config_path}")
-            logger.info(f"-���XW~W_: {config_path}")
+            logger.info(f"設定を保存しました: {config_path}")
             return True
             
         except Exception as e:
             logger.error(f"Failed to save config file: {e}")
-            logger.error(f"-�ա��n�Xk1W: {e}")
+            logger.error(f"設定ファイルの保存に失敗: {e}")
             return False
 
 
 def create_sample_config() -> Config:
     """
     Create sample configuration for testing.
-    (ƹ�(����-��\)
+    (テスト用のサンプル設定を作成)
     
     Returns:
-        Config: Sample configuration (����-�)
+        Config: Sample configuration (サンプル設定)
     """
     return Config(
         camera=CameraConfig(

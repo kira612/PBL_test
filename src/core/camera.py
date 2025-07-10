@@ -1,6 +1,6 @@
 """
 Camera input module for the monitoring system.
-(ã–·¹Æàn«áée›â¸åüë)
+(ç›£è¦–ã‚·ã‚¹ãƒ†ãƒ ã®ã‚«ãƒ¡ãƒ©å…¥åŠ›ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«)
 """
 
 import asyncio
@@ -16,7 +16,7 @@ from loguru import logger
 class CameraManager:
     """
     Camera management class for handling video input.
-    (ÓÇªe›’æY‹_n«áé¡¯é¹)
+    (ãƒ“ãƒ‡ã‚ªå…¥åŠ›ã‚’å‡¦ç†ã™ã‚‹ã‚«ãƒ¡ãƒ©ç®¡ç†ã‚¯ãƒ©ã‚¹)
     """
 
     def __init__(
@@ -28,13 +28,13 @@ class CameraManager:
     ) -> None:
         """
         Initialize camera manager.
-        («áéŞÍü¸ãün)
+        (ã‚«ãƒ¡ãƒ©ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼ã®åˆæœŸåŒ–)
         
         Args:
-            camera_id: Camera device ID («áéÇĞ¤¹ID)
-            width: Frame width (ÕìüàE)
-            height: Frame height (ÕìüàØU)
-            fps: Frames per second (ÕìüàìüÈ)
+            camera_id: Camera device ID (ã‚«ãƒ¡ãƒ©ãƒ‡ãƒã‚¤ã‚¹ID)
+            width: Frame width (ãƒ•ãƒ¬ãƒ¼ãƒ å¹…)
+            height: Frame height (ãƒ•ãƒ¬ãƒ¼ãƒ é«˜ã•)
+            fps: Frames per second (ãƒ•ãƒ¬ãƒ¼ãƒ ãƒ¬ãƒ¼ãƒˆ)
         """
         self.camera_id = camera_id
         self.width = width
@@ -48,31 +48,31 @@ class CameraManager:
     def initialize(self) -> bool:
         """
         Initialize camera device.
-        («áéÇĞ¤¹n)
+        (ã‚«ãƒ¡ãƒ©ãƒ‡ãƒã‚¤ã‚¹ã®åˆæœŸåŒ–)
         
         Returns:
-            bool: Success status (Ÿ¹Æü¿¹)
+            bool: Success status (æˆåŠŸçŠ¶æ…‹)
         """
         try:
             self.cap = cv2.VideoCapture(self.camera_id)
             
             if not self.cap.isOpened():
                 logger.error(f"Failed to open camera {self.camera_id}")
-                logger.error(f"«áé {self.camera_id} ’‹Q~[“gW_")
+                logger.error(f"ã‚«ãƒ¡ãƒ© {self.camera_id} ã®ã‚ªãƒ¼ãƒ—ãƒ³ã«å¤±æ•—ã—ã¾ã—ãŸ")
                 return False
             
-            # Set camera properties («áé×íÑÆ£n-š)
+            # Set camera properties (ã‚«ãƒ¡ãƒ©ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã®è¨­å®š)
             self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, self.width)
             self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, self.height)
             self.cap.set(cv2.CAP_PROP_FPS, self.fps)
             
-            # Verify settings (-šnº)
+            # Verify settings (è¨­å®šã®ç¢ºèª)
             actual_width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
             actual_height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
             actual_fps = int(self.cap.get(cv2.CAP_PROP_FPS))
             
             logger.info(f"Camera initialized: {actual_width}x{actual_height} @ {actual_fps}fps")
-            logger.info(f"«áéŒ†: {actual_width}x{actual_height} @ {actual_fps}fps")
+            logger.info(f"ã‚«ãƒ¡ãƒ©åˆæœŸåŒ–å®Œäº†: {actual_width}x{actual_height} @ {actual_fps}fps")
             
             self.is_running = True
             self._start_time = time.time()
@@ -80,16 +80,16 @@ class CameraManager:
             
         except Exception as e:
             logger.error(f"Camera initialization failed: {e}")
-            logger.error(f"«áék1WW~W_: {e}")
+            logger.error(f"ã‚«ãƒ¡ãƒ©åˆæœŸåŒ–ã«å¤±æ•—ã—ã¾ã—ãŸ: {e}")
             return False
 
     def read_frame(self) -> Optional[np.ndarray]:
         """
         Read a single frame from camera.
-        («áéK‰1Õìüà’­ÖŠ)
+        (ã‚«ãƒ¡ãƒ©ã‹ã‚‰å˜ä¸€ãƒ•ãƒ¬ãƒ¼ãƒ ã‚’èª­ã¿å–ã‚Š)
         
         Returns:
-            Optional[np.ndarray]: Frame data or None if failed (ÕìüàÇü¿~_o1WBNone)
+            Optional[np.ndarray]: Frame data or None if failed (ãƒ•ãƒ¬ãƒ¼ãƒ ãƒ‡ãƒ¼ã‚¿ã¾ãŸã¯å¤±æ•—æ™‚ã¯None)
         """
         if not self.cap or not self.is_running:
             return None
@@ -97,7 +97,7 @@ class CameraManager:
         ret, frame = self.cap.read()
         if not ret:
             logger.warning("Failed to read frame from camera")
-            logger.warning("«áéK‰Õìüà’­ÖŒ~[“gW_")
+            logger.warning("ã‚«ãƒ¡ãƒ©ã‹ã‚‰ãƒ•ãƒ¬ãƒ¼ãƒ ã®èª­ã¿å–ã‚Šã«å¤±æ•—ã—ã¾ã—ãŸ")
             return None
             
         self._frame_count += 1
@@ -106,10 +106,10 @@ class CameraManager:
     def get_frame_generator(self) -> Generator[np.ndarray, None, None]:
         """
         Generator for continuous frame reading.
-        (#šÕìüà­ÖŠn¸§Íìü¿)
+        (é€£ç¶šãƒ•ãƒ¬ãƒ¼ãƒ èª­ã¿å–ã‚Šç”¨ã‚¸ã‚§ãƒãƒ¬ãƒ¼ã‚¿ãƒ¼)
         
         Yields:
-            np.ndarray: Frame data (ÕìüàÇü¿)
+            np.ndarray: Frame data (ãƒ•ãƒ¬ãƒ¼ãƒ ãƒ‡ãƒ¼ã‚¿)
         """
         while self.is_running:
             frame = self.read_frame()
@@ -121,10 +121,10 @@ class CameraManager:
     async def get_async_frame_generator(self) -> AsyncGenerator[np.ndarray, None]:
         """
         Async generator for continuous frame reading.
-        (#šÕìüà­ÖŠn^¸§Íìü¿)
+        (é€£ç¶šãƒ•ãƒ¬ãƒ¼ãƒ èª­ã¿å–ã‚Šç”¨éåŒæœŸã‚¸ã‚§ãƒãƒ¬ãƒ¼ã‚¿ãƒ¼)
         
         Yields:
-            np.ndarray: Frame data (ÕìüàÇü¿)
+            np.ndarray: Frame data (ãƒ•ãƒ¬ãƒ¼ãƒ ãƒ‡ãƒ¼ã‚¿)
         """
         frame_interval = 1.0 / self.fps
         
@@ -137,7 +137,7 @@ class CameraManager:
             else:
                 break
                 
-            # Maintain target FPS (îFPS’­)
+            # Maintain target FPS (ç›®æ¨™FPSç¶­æŒ)
             elapsed = time.time() - start_time
             sleep_time = max(0, frame_interval - elapsed)
             if sleep_time > 0:
@@ -146,10 +146,10 @@ class CameraManager:
     def get_camera_info(self) -> dict:
         """
         Get camera information.
-        («áéÅ1nÖ—)
+        (ã‚«ãƒ¡ãƒ©æƒ…å ±ã®å–å¾—)
         
         Returns:
-            dict: Camera information («áéÅ1)
+            dict: Camera information (ã‚«ãƒ¡ãƒ©æƒ…å ±)
         """
         if not self.cap:
             return {}
@@ -169,10 +169,10 @@ class CameraManager:
     def get_stats(self) -> dict:
         """
         Get camera statistics.
-        («áéqÅ1nÖ—)
+        (ã‚«ãƒ¡ãƒ©çµ±è¨ˆæƒ…å ±ã®å–å¾—)
         
         Returns:
-            dict: Camera statistics («áéqÅ1)
+            dict: Camera statistics (ã‚«ãƒ¡ãƒ©çµ±è¨ˆæƒ…å ±)
         """
         running_time = time.time() - self._start_time if self._start_time > 0 else 0
         actual_fps = self._frame_count / running_time if running_time > 0 else 0
@@ -187,7 +187,7 @@ class CameraManager:
     def stop(self) -> None:
         """
         Stop camera capture.
-        («áé­ã×Áãn\b)
+        (ã‚«ãƒ¡ãƒ©ã‚­ãƒ£ãƒ—ãƒãƒ£ã®åœæ­¢)
         """
         self.is_running = False
         if self.cap:
@@ -195,7 +195,7 @@ class CameraManager:
             self.cap = None
             
         logger.info("Camera stopped")
-        logger.info("«áé’\bW~W_")
+        logger.info("ã‚«ãƒ¡ãƒ©ãŒåœæ­¢ã•ã‚Œã¾ã—ãŸ")
 
     def __enter__(self):
         """Context manager entry."""
@@ -211,16 +211,16 @@ class CameraManager:
 class MultiCameraManager:
     """
     Multiple camera management class.
-    (p«áé¡¯é¹)
+    (è¤‡æ•°ã‚«ãƒ¡ãƒ©ç®¡ç†ã‚¯ãƒ©ã‚¹)
     """
 
     def __init__(self, camera_configs: list[dict]) -> None:
         """
         Initialize multiple camera manager.
-        (p«áéŞÍü¸ãün)
+        (è¤‡æ•°ã‚«ãƒ¡ãƒ©ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼ã®åˆæœŸåŒ–)
         
         Args:
-            camera_configs: List of camera configurations («áé-šnê¹È)
+            camera_configs: List of camera configurations (ã‚«ãƒ¡ãƒ©è¨­å®šã®ãƒªã‚¹ãƒˆ)
         """
         self.cameras: dict[int, CameraManager] = {}
         
@@ -236,10 +236,10 @@ class MultiCameraManager:
     def initialize_all(self) -> bool:
         """
         Initialize all cameras.
-        (Yyfn«áén)
+        (ã™ã¹ã¦ã®ã‚«ãƒ¡ãƒ©ã®åˆæœŸåŒ–)
         
         Returns:
-            bool: Success status (Ÿ¹Æü¿¹)
+            bool: Success status (æˆåŠŸçŠ¶æ…‹)
         """
         success_count = 0
         
@@ -247,36 +247,36 @@ class MultiCameraManager:
             if camera.initialize():
                 success_count += 1
                 logger.info(f"Camera {camera_id} initialized successfully")
-                logger.info(f"«áé {camera_id} nkŸW~W_")
+                logger.info(f"ã‚«ãƒ¡ãƒ© {camera_id} ã®åˆæœŸåŒ–ãŒæˆåŠŸã—ã¾ã—ãŸ")
             else:
                 logger.error(f"Camera {camera_id} initialization failed")
-                logger.error(f"«áé {camera_id} nk1WW~W_")
+                logger.error(f"ã‚«ãƒ¡ãƒ© {camera_id} ã®åˆæœŸåŒ–ã«å¤±æ•—ã—ã¾ã—ãŸ")
         
         return success_count > 0
 
     def get_camera(self, camera_id: int) -> Optional[CameraManager]:
         """
         Get camera manager by ID.
-        (IDkˆ‹«áéŞÍü¸ãünÖ—)
+        (IDã«ã‚ˆã‚‹ã‚«ãƒ¡ãƒ©ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼ã®å–å¾—)
         
         Args:
-            camera_id: Camera ID («áéID)
+            camera_id: Camera ID (ã‚«ãƒ¡ãƒ©ID)
             
         Returns:
-            Optional[CameraManager]: Camera manager or None («áéŞÍü¸ãü~_oNone)
+            Optional[CameraManager]: Camera manager or None (ã‚«ãƒ¡ãƒ©ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼ã¾ãŸã¯None)
         """
         return self.cameras.get(camera_id)
 
     def stop_all(self) -> None:
         """
         Stop all cameras.
-        (Yyfn«áén\b)
+        (ã™ã¹ã¦ã®ã‚«ãƒ¡ãƒ©ã®åœæ­¢)
         """
         for camera in self.cameras.values():
             camera.stop()
         
         logger.info("All cameras stopped")
-        logger.info("Yyfn«áé’\bW~W_")
+        logger.info("ã™ã¹ã¦ã®ã‚«ãƒ¡ãƒ©ãŒåœæ­¢ã•ã‚Œã¾ã—ãŸ")
 
     def __enter__(self):
         """Context manager entry."""

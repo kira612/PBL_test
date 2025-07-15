@@ -780,6 +780,46 @@ class PositionEstimator:
             PositionMethod.MIDAS_DEPTH, 
             PositionMethod.DPT_DEPTH
         ]
+        
+        # Initialization state
+        self.is_initialized = False
+        
+    def initialize(self) -> bool:
+        """
+        Initialize position estimator components.
+        (位置推定器のコンポーネントを初期化)
+        
+        Returns:
+            bool: True if initialization successful (初期化成功時True)
+        """
+        try:
+            logger.info(f"Initializing position estimator with method: {self.method.value}")
+            logger.info(f"位置推定器を初期化中、手法: {self.method.value}")
+            
+            # Log room dimensions
+            logger.info(f"Room dimensions: {self.room_dimensions.width}m x {self.room_dimensions.height}m")
+            logger.info(f"部屋の寸法: {self.room_dimensions.width}m x {self.room_dimensions.height}m")
+            
+            # Log frame dimensions
+            logger.info(f"Frame dimensions: {self.frame_width}x{self.frame_height}")
+            logger.info(f"フレーム寸法: {self.frame_width}x{self.frame_height}")
+            
+            # Initialize specific estimator if needed
+            if hasattr(self.estimator, 'initialize'):
+                if not self.estimator.initialize():
+                    logger.error("Failed to initialize specific estimator")
+                    logger.error("特定の推定器の初期化に失敗しました")
+                    return False
+            
+            self.is_initialized = True
+            logger.info("Position estimator initialized successfully")
+            logger.info("位置推定器の初期化が完了しました")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Failed to initialize position estimator: {e}")
+            logger.error(f"位置推定器の初期化に失敗しました: {e}")
+            return False
     
     def estimate_positions(
         self, 

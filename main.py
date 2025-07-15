@@ -47,7 +47,26 @@ def setup_logging(debug: bool = False) -> None:
     type=click.Path(exists=True, path_type=Path),
     help="Path to configuration file (設定ファイルのパス)",
 )
-def main(debug: bool, camera_id: int, config: Optional[Path]) -> None:
+@click.option(
+    "--display",
+    type=click.Choice(['none', 'window', 'headless']),
+    default='none',
+    help="Display mode for visualization (可視化の表示モード)",
+)
+@click.option(
+    "--show-fps",
+    is_flag=True,
+    default=True,
+    help="Show FPS counter in display (表示でFPSカウンターを表示)",
+)
+@click.option(
+    "--show-info",
+    is_flag=True,
+    default=True,
+    help="Show detection and position info (検出と位置情報を表示)",
+)
+def main(debug: bool, camera_id: int, config: Optional[Path], 
+         display: str, show_fps: bool, show_info: bool) -> None:
     """
     Camera-based monitoring system for laboratory environments.
     (研究室環境向けカメラベース監視システム)
@@ -79,7 +98,7 @@ def main(debug: bool, camera_id: int, config: Optional[Path]) -> None:
         logger.info("システムが正常に初期化されました")
         
         # Run the main application loop (メインアプリケーションループの実行)
-        asyncio.run(run_monitoring_system(camera_id, config))
+        asyncio.run(run_monitoring_system(camera_id, config, display, show_fps, show_info))
         
     except KeyboardInterrupt:
         logger.info("Shutting down system...")
@@ -90,7 +109,8 @@ def main(debug: bool, camera_id: int, config: Optional[Path]) -> None:
         raise
 
 
-async def run_monitoring_system(camera_id: int, config: Optional[Path]) -> None:
+async def run_monitoring_system(camera_id: int, config: Optional[Path], 
+                               display: str, show_fps: bool, show_info: bool) -> None:
     """
     Run the main monitoring system loop.
     (メイン監視システムループの実行)
@@ -98,16 +118,27 @@ async def run_monitoring_system(camera_id: int, config: Optional[Path]) -> None:
     from src.core.coordinator import MonitoringCoordinator
     from src.core.detector import DetectionMethod
     from src.vision.position_estimator import PositionMethod
+    from src.visualization.display import create_display_config
     
     logger.info("Monitoring system is running...")
     logger.info("監視システムが実行中です...")
+    
+    # Create display configuration
+    display_config = create_display_config(
+        mode=display,
+        show_fps=show_fps,
+        show_detection_count=show_info,
+        show_position_info=show_info,
+        show_action_info=show_info
+    )
     
     # Initialize monitoring coordinator
     coordinator = MonitoringCoordinator(
         camera_id=camera_id,
         config_path=config,
         detection_method=DetectionMethod.YOLO,  # Can be changed to MEDIAPIPE
-        position_method=PositionMethod.BBOX_CENTER  # Can be changed to PERSPECTIVE_MAPPING
+        position_method=PositionMethod.BBOX_CENTER,  # Can be changed to PERSPECTIVE_MAPPING
+        display_config=display_config
     )
     
     # Initialize system components

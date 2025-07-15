@@ -21,6 +21,10 @@ graph TB
         ActionRecognizer[行動認識<br/>Action Recognizer]
     end
 
+    subgraph "Visualization Layer"
+        MonitoringDisplay[監視表示<br/>Monitoring Display]
+    end
+
     subgraph "Coordination Layer"
         Coordinator[システム統合<br/>Monitoring Coordinator]
     end
@@ -40,9 +44,11 @@ graph TB
     PersonDetector --> Coordinator
     PositionEstimator --> Coordinator
     ActionRecognizer --> Coordinator
+    Coordinator --> MonitoringDisplay
     Coordinator --> Display
     Coordinator --> Storage
     Coordinator --> Statistics
+    MonitoringDisplay --> Display
 ```
 
 ## モジュール詳細構成
@@ -193,7 +199,54 @@ graph TB
    - 足の非対称配置
    - 継続的な位置変化
 
-### 5. システム統合層 (System Coordination Layer)
+### 5. 可視化層 (Visualization Layer)
+
+```mermaid
+graph TB
+    subgraph "Display Components"
+        DisplayManager[Display Manager<br/>・ウィンドウ管理<br/>・レンダリング制御]
+        BBoxRenderer[BBox Renderer<br/>・バウンディングボックス描画<br/>・ラベル表示]
+        InfoOverlay[Info Overlay<br/>・FPS表示<br/>・統計情報]
+        RoomLayout[Room Layout<br/>・部屋俯瞰図<br/>・位置マーカー]
+    end
+    
+    subgraph "Display Modes"
+        WindowMode[Window Mode<br/>OpenCVウィンドウ表示]
+        HeadlessMode[Headless Mode<br/>バックグラウンド処理]
+        NoneMode[None Mode<br/>表示なし]
+    end
+    
+    subgraph "Visual Elements"
+        PersonBox[Person BBox<br/>・緑色の枠<br/>・信頼度表示]
+        PositionInfo[Position Info<br/>・座標表示<br/>・距離表示]
+        ActionLabel[Action Label<br/>・行動タイプ<br/>・色分け表示]
+        SystemStats[System Stats<br/>・FPS<br/>・検出数]
+    end
+    
+    DisplayManager --> BBoxRenderer
+    DisplayManager --> InfoOverlay
+    DisplayManager --> RoomLayout
+    
+    BBoxRenderer --> PersonBox
+    InfoOverlay --> PositionInfo
+    InfoOverlay --> ActionLabel
+    InfoOverlay --> SystemStats
+    
+    DisplayManager --> WindowMode
+    DisplayManager --> HeadlessMode
+    DisplayManager --> NoneMode
+```
+
+#### 可視化機能の特徴
+- **リアルタイム表示**: カメラ映像にリアルタイムで検出結果をオーバーレイ
+- **多様な表示モード**: ウィンドウ表示、ヘッドレス、表示なしから選択可能
+- **豊富な情報表示**: 検出、位置、行動、システム統計を統合表示
+- **インタラクティブ操作**: ESCキーやウィンドウ閉じでシステム終了
+- **カスタマイズ可能**: 表示項目や色設定を設定ファイルで制御
+
+---
+
+### 6. システム統合層 (System Coordination Layer)
 
 ```mermaid
 graph TB
@@ -226,7 +279,7 @@ graph TB
     Stats --> Log
 ```
 
-## データフロー
+## データフロー (Data Flow)
 
 ### リアルタイム処理フロー
 
@@ -237,6 +290,7 @@ sequenceDiagram
     participant Position as 位置推定
     participant Action as 行動認識
     participant Coord as コーディネータ
+    participant Visual as 可視化
     participant Display as 表示
 
     loop フレーム処理
@@ -248,8 +302,10 @@ sequenceDiagram
         Action->>Action: 行動認識処理
         Position->>Coord: 位置情報送信
         Action->>Coord: 行動情報送信
-        Coord->>Coord: 結果統合・可視化
-        Coord->>Display: 表示用フレーム送信
+        Coord->>Coord: 結果統合処理
+        Coord->>Visual: 統合結果送信
+        Visual->>Visual: オーバーレイ描画
+        Visual->>Display: 可視化フレーム送信
     end
 ```
 

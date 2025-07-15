@@ -16,7 +16,8 @@ A real-time monitoring system that integrates person detection, position estimat
 - **人物検出** (Person Detection): YOLO/MediaPipeによる高精度検出
 - **位置推定** (Position Estimation): 部屋座標系での正確な位置特定
 - **行動認識** (Action Recognition): 立つ・座る・歩く・PC操作の識別
-- **リアルタイム可視化** (Real-time Visualization): 統合的な監視インターフェース
+- **リアルタイム可視化** (Real-time Visualization): バウンディングボックス・位置・行動情報の統合表示
+- **マルチモード表示** (Multi-mode Display): ウィンドウ・ヘッドレス・表示なしから選択可能
 
 ## 🚀 主な特徴 (Key Features)
 
@@ -34,6 +35,15 @@ A real-time monitoring system that integrates person detection, position estimat
 - **Sitting** (座位): 着座姿勢の識別
 - **Walking** (歩行): 移動パターンの認識
 - **Computer Interaction** (PC操作): タイピング姿勢の判定
+
+### 🖥️ 高度な可視化機能
+- **リアルタイム表示**: カメラ映像への検出結果オーバーレイ
+- **バウンディングボックス**: 人物検出の可視化（信頼度表示付き）
+- **位置情報**: 部屋座標と距離の数値表示
+- **行動ラベル**: 認識された行動の色分け表示
+- **システム統計**: FPS、検出数、タイムスタンプ表示
+- **部屋レイアウト**: 俯瞰図での位置マーカー表示
+- **マルチモード**: ウィンドウ・ヘッドレス・表示なしから選択
 
 ### 🔧 研究指向設計
 - モジュラー構成による柔軟な拡張性
@@ -81,22 +91,37 @@ python main.py
 
 ### 基本実行
 ```bash
-# デフォルト設定で実行
+# デフォルト設定で実行（表示なし）
 python main.py
 
-# カメラIDを指定
-python main.py --camera-id 1
+# ウィンドウ表示で実行
+python main.py --display window
+
+# 詳細情報付きウィンドウ表示
+python main.py --display window --show-fps --show-info
+
+# カメラIDを指定してウィンドウ表示
+python main.py --camera-id 1 --display window
 
 # 設定ファイルを使用
-python main.py --config config.yaml
+python main.py --config config.yaml --display window
 
 # デバッグモード
-python main.py --debug
+python main.py --debug --display window
 ```
 
 ### 実行中の操作
-- **'q'キー**: システム終了
-- **ウィンドウ×ボタン**: 安全な終了
+- **Ctrl+C**: システム終了（コマンドライン）
+- **ESCキー**: システム終了（ウィンドウ表示時）
+- **ウィンドウ×ボタン**: 安全な終了（ウィンドウ表示時）
+
+### 可視化オプション
+- **--display**: 表示モード選択
+  - `none`: 表示なし（デフォルト）
+  - `window`: OpenCVウィンドウ表示
+  - `headless`: バックグラウンド処理
+- **--show-fps**: FPSカウンター表示
+- **--show-info**: 検出・位置・行動情報表示
 
 ## ⚙️ 設定 (Configuration)
 

@@ -9,8 +9,9 @@
 2. [検出モジュール (Detection Module)](#2-検出モジュール-detection-module)
 3. [位置推定モジュール (Position Estimation Module)](#3-位置推定モジュール-position-estimation-module)
 4. [行動認識モジュール (Action Recognition Module)](#4-行動認識モジュール-action-recognition-module)
-5. [システム統合モジュール (System Coordinator Module)](#5-システム統合モジュール-system-coordinator-module)
-6. [設定管理モジュール (Configuration Module)](#6-設定管理モジュール-configuration-module)
+5. [可視化モジュール (Visualization Module)](#5-可視化モジュール-visualization-module)
+6. [システム統合モジュール (System Coordinator Module)](#6-システム統合モジュール-system-coordinator-module)
+7. [設定管理モジュール (Configuration Module)](#7-設定管理モジュール-configuration-module)
 
 ---
 
@@ -683,10 +684,127 @@ def visualize_actions(
 
 ---
 
-## 5. システム統合モジュール (System Coordinator Module)
+## 5. 可視化モジュール (Visualization Module)
+**ファイル**: `src/visualization/display.py`
+
+### 5.1 MonitoringDisplay クラス
+
+監視システムの可視化表示を管理するメインクラス。
+
+#### コンストラクタ
+```python
+def __init__(self, config: DisplayConfig) -> None:
+```
+**引数:**
+- `config` (DisplayConfig): 表示設定
+
+**戻り値:** なし
+
+#### メソッド
+
+##### initialize()
+```python
+def initialize(self) -> bool:
+```
+**説明:** 表示システムを初期化し、ウィンドウを作成します。
+
+**引数:** なし
+
+**戻り値:** `bool` - 初期化成功時True
+
+##### render_frame()
+```python
+def render_frame(
+    self,
+    frame: np.ndarray,
+    detections: List[Detection],
+    positions: List[RoomPosition],
+    actions: List[ActionResult],
+    room_width: float = 4.0,
+    room_height: float = 3.0,
+    additional_info: Optional[Dict[str, Any]] = None
+) -> Optional[np.ndarray]:
+```
+**説明:** フレームに可視化オーバーレイを描画します。
+
+**引数:**
+- `frame` (np.ndarray): 入力フレーム
+- `detections` (List[Detection]): 検出結果リスト
+- `positions` (List[RoomPosition]): 位置推定結果リスト
+- `actions` (List[ActionResult]): 行動認識結果リスト
+- `room_width` (float): 部屋の幅[m] (デフォルト: 4.0)
+- `room_height` (float): 部屋の高さ[m] (デフォルト: 3.0)
+- `additional_info` (Optional[Dict[str, Any]]): 追加表示情報
+
+**戻り値:** `Optional[np.ndarray]` - レンダリング済みフレームまたはNone
+
+##### cleanup()
+```python
+def cleanup(self) -> None:
+```
+**説明:** 表示リソースをクリーンアップします。
+
+**引数:** なし
+
+**戻り値:** なし
+
+### 5.2 DisplayConfig クラス
+
+表示設定を管理するデータクラス。
+
+#### 属性
+- `mode` (DisplayMode): 表示モード (NONE/WINDOW/HEADLESS)
+- `window_name` (str): ウィンドウ名
+- `window_width` (int): ウィンドウ幅
+- `window_height` (int): ウィンドウ高さ
+- `show_fps` (bool): FPS表示フラグ
+- `show_detection_count` (bool): 検出数表示フラグ
+- `show_position_info` (bool): 位置情報表示フラグ
+- `show_action_info` (bool): 行動情報表示フラグ
+- `bbox_thickness` (int): バウンディングボックス線の太さ
+- `text_scale` (float): テキストスケール
+- `text_thickness` (int): テキスト線の太さ
+
+### 5.3 DisplayMode enum
+
+表示モードを定義する列挙型。
+
+#### 値
+- `NONE`: 表示なし
+- `WINDOW`: ウィンドウ表示
+- `HEADLESS`: ヘッドレス表示
+
+### 5.4 ユーティリティ関数
+
+#### create_display_config()
+```python
+def create_display_config(
+    mode: str = "none",
+    window_name: str = "Laboratory Monitoring System",
+    show_fps: bool = True,
+    show_detection_count: bool = True,
+    show_position_info: bool = True,
+    show_action_info: bool = True
+) -> DisplayConfig:
+```
+**説明:** 表示設定を作成します。
+
+**引数:**
+- `mode` (str): 表示モード ("none", "window", "headless")
+- `window_name` (str): ウィンドウ名
+- `show_fps` (bool): FPS表示フラグ
+- `show_detection_count` (bool): 検出数表示フラグ
+- `show_position_info` (bool): 位置情報表示フラグ
+- `show_action_info` (bool): 行動情報表示フラグ
+
+**戻り値:** `DisplayConfig` - 表示設定
+
+---
+
+## 6. システム統合モジュール (System Coordinator Module)
 **ファイル**: `src/core/coordinator.py`
 
-### 5.1 MonitoringCoordinator クラス
+### 6.1 MonitoringCoordinator クラス
 
 全監視コンポーネントを統合するメインコーディネータクラス。
 
@@ -697,7 +815,8 @@ def __init__(
     camera_id: int = 0,
     config_path: Optional[Path] = None,
     detection_method: DetectionMethod = DetectionMethod.YOLO,
-    position_method: PositionMethod = PositionMethod.BBOX_CENTER
+    position_method: PositionMethod = PositionMethod.BBOX_CENTER,
+    display_config: Optional[DisplayConfig] = None
 ):
 ```
 **引数:**
@@ -705,6 +824,7 @@ def __init__(
 - `config_path` (Optional[Path]): 設定ファイルパス
 - `detection_method` (DetectionMethod): 人物検出方法
 - `position_method` (PositionMethod): 位置推定方法
+- `display_config` (Optional[DisplayConfig]): 表示設定
 
 **戻り値:** なし
 
@@ -762,10 +882,10 @@ def get_system_stats(self) -> Dict[str, Any]:
 
 ---
 
-## 6. 設定管理モジュール (Configuration Module)
+## 7. 設定管理モジュール (Configuration Module)
 **ファイル**: `src/utils/config.py`
 
-### 6.1 設定データクラス
+### 7.1 設定データクラス
 
 #### CameraConfig
 ```python
@@ -811,6 +931,18 @@ class ActionConfig:
     confidence_threshold: float = 0.3
 ```
 
+#### DisplayConfig
+```python
+@dataclass
+class DisplayConfig:
+    mode: str = "none"  # "none", "window", "headless"
+    window_name: str = "Laboratory Monitoring System"
+    show_fps: bool = True
+    show_detection_count: bool = True
+    show_position_info: bool = True
+    show_action_info: bool = True
+```
+
 #### SystemConfig
 ```python
 @dataclass
@@ -821,7 +953,7 @@ class SystemConfig:
     log_level: str = "INFO"
 ```
 
-### 6.2 Config クラス
+### 7.2 Config クラス
 
 メイン設定管理クラス。
 
@@ -834,6 +966,7 @@ def __init__(
     detection: DetectionConfig,
     position: PositionConfig,
     action: ActionConfig,
+    display: DisplayConfig,
     system: SystemConfig
 ):
 ```
@@ -843,6 +976,7 @@ def __init__(
 - `detection` (DetectionConfig): 検出設定
 - `position` (PositionConfig): 位置推定設定
 - `action` (ActionConfig): 行動認識設定
+- `display` (DisplayConfig): 表示設定
 - `system` (SystemConfig): システム設定
 
 **戻り値:** なし

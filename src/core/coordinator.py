@@ -16,6 +16,7 @@ from .camera import CameraManager
 from .detector import PersonDetector, DetectionMethod
 from ..vision.position_estimator import PositionEstimator, PositionMethod, RoomDimensions
 from ..vision.action_recognizer import ActionRecognizer
+from ..visualization.display import MonitoringDisplay, DisplayConfig, create_display_config
 from ..utils.config import Config
 
 
@@ -30,7 +31,8 @@ class MonitoringCoordinator:
         camera_id: int = 0,
         config_path: Optional[Path] = None,
         detection_method: DetectionMethod = DetectionMethod.YOLO,
-        position_method: PositionMethod = PositionMethod.BBOX_CENTER
+        position_method: PositionMethod = PositionMethod.BBOX_CENTER,
+        display_config: Optional[DisplayConfig] = None
     ):
         """
         Initialize monitoring coordinator.
@@ -41,11 +43,13 @@ class MonitoringCoordinator:
             config_path: Configuration file path (設定ファイルのパス)
             detection_method: Person detection method (人物検出手法)
             position_method: Position estimation method (位置推定手法)
+            display_config: Display configuration (表示設定)
         """
         self.camera_id = camera_id
         self.config_path = config_path
         self.detection_method = detection_method
         self.position_method = position_method
+        self.display_config = display_config or create_display_config()
         
         # Initialize components (コンポーネントの初期化)
         self.config: Optional[Config] = None
@@ -53,6 +57,7 @@ class MonitoringCoordinator:
         self.detector: Optional[PersonDetector] = None
         self.position_estimator: Optional[PositionEstimator] = None
         self.action_recognizer: Optional[ActionRecognizer] = None
+        self.display: Optional[MonitoringDisplay] = None
         
         # Monitoring state (監視状態)
         self.is_running = False
@@ -77,17 +82,17 @@ class MonitoringCoordinator:
             
             # Load configuration (設定の読み込み)
             if self.config_path:
-                self.config = Config.load_from_file(self.config_path)
+                self.config = Config.from_file(self.config_path)
             else:
-                self.config = Config.get_default()
+                self.config = Config.default()
             
             # Initialize camera (カメラの初期化)
             camera_config = self.config.camera
             self.camera = CameraManager(
                 camera_id=self.camera_id,
-                width=camera_config.get("width", 640),
-                height=camera_config.get("height", 480),
-                fps=camera_config.get("fps", 30)
+                width=camera_config.width,
+                height=camera_config.height,
+                fps=camera_config.fps
             )
             
             if not self.camera.initialize():
@@ -99,7 +104,8 @@ class MonitoringCoordinator:
             detector_config = self.config.detection
             self.detector = PersonDetector(
                 method=self.detection_method,
-                **detector_config
+                confidence_threshold=detector_config.confidence_threshold,
+                model_path=detector_config.yolo_model_path
             )
             
             if not self.detector.initialize():
@@ -108,16 +114,18 @@ class MonitoringCoordinator:
                 return False
             
             # Initialize position estimator (位置推定器の初期化)
-            position_config = self.config.position_estimation
+            position_config = self.config.position
+            room_config = self.config.room
             room_dims = RoomDimensions(
-                width=position_config.get("room_width", 3.0),
-                height=position_config.get("room_height", 4.0)
+                width=room_config.width,
+                height=room_config.height
             )
             
             self.position_estimator = PositionEstimator(
                 method=self.position_method,
                 room_dimensions=room_dims,
-                **position_config
+                frame_width=camera_config.width,
+                frame_height=camera_config.height
             )
             
             if not self.position_estimator.initialize():
@@ -126,12 +134,19 @@ class MonitoringCoordinator:
                 return False
             
             # Initialize action recognizer (行動認識器の初期化)
-            action_config = self.config.action_recognition
-            self.action_recognizer = ActionRecognizer(**action_config)
+            action_config = self.config.action
+            self.action_recognizer = ActionRecognizer(use_pose=action_config.use_pose)
             
             if not self.action_recognizer.initialize():
                 logger.error("Failed to initialize action recognizer")
                 logger.error("行動認識器の初期化に失敗しました")
+                return False
+            
+            # Initialize display (表示の初期化)
+            self.display = MonitoringDisplay(self.display_config)
+            if not self.display.initialize():
+                logger.error("Failed to initialize display")
+                logger.error("表示の初期化に失敗しました")
                 return False
             
             logger.info("All components initialized successfully")
@@ -215,26 +230,73 @@ class MonitoringCoordinator:
             if not detections:
                 return
             
-            # Position estimation for each detection (各検出に対する位置推定)
-            for detection in detections:
-                # Estimate position (位置推定)
-                position = self.position_estimator.estimate_position(
-                    detection.bbox, frame.shape[:2]
+            # Position estimation for all detections (全検出の位置推定)
+            try:
+                positions = self.position_estimator.estimate_positions(detections, frame)
+            except Exception as e:
+                logger.warning(f"Position estimation failed: {e}")
+                logger.warning(f"位置推定に失敗しました: {e}")
+                # Create default positions if estimation fails
+                positions = []
+                for detection in detections:
+                    x, y, w, h = detection.bbox
+                    center_x = x + w / 2
+                    center_y = y + h / 2
+                    from ..vision.position_estimator import RoomPosition
+                    default_position = RoomPosition(
+                        x=center_x / frame.shape[1] * self.config.room.width,
+                        y=center_y / frame.shape[0] * self.config.room.height,
+                        confidence=0.5,
+                        timestamp=time.time()
+                    )
+                    positions.append(default_position)
+            
+            # Action recognition for all detections (全検出の行動認識)
+            try:
+                actions = self.action_recognizer.recognize_actions(detections, frame)
+            except Exception as e:
+                logger.warning(f"Action recognition failed: {e}")
+                logger.warning(f"行動認識に失敗しました: {e}")
+                # Create default actions if recognition fails
+                from ..vision.action_recognizer import ActionResult, ActionType
+                actions = []
+                for detection in detections:
+                    default_action = ActionResult(
+                        action_type=ActionType.UNKNOWN,
+                        confidence=0.0,
+                        timestamp=time.time()
+                    )
+                    actions.append(default_action)
+            
+            # Render frame with visualization if display is enabled
+            if self.display:
+                rendered_frame = self.display.render_frame(
+                    frame=frame,
+                    detections=detections,
+                    positions=positions,
+                    actions=actions,
+                    room_width=self.config.room.width,
+                    room_height=self.config.room.height,
+                    additional_info={
+                        "Total Frames": self.stats["total_frames"],
+                        "Total Detections": self.stats["total_detections"]
+                    }
                 )
                 
-                # Extract person region for action recognition (行動認識のための人物領域抽出)
-                x, y, w, h = detection.bbox
-                person_region = frame[y:y+h, x:x+w]
-                
-                # Action recognition (行動認識)
-                if person_region.size > 0:
-                    action = self.action_recognizer.recognize_action(person_region)
-                    
-                    # Log results (結果をログ出力)
-                    logger.debug(f"Detection: confidence={detection.confidence:.2f}, "
-                               f"position={position}, action={action}")
-                    logger.debug(f"検出: 信頼度={detection.confidence:.2f}, "
-                               f"位置={position}, 行動={action}")
+                # Check if window is still open (for window mode)
+                if not self.display.is_window_open():
+                    self.is_running = False
+                    logger.info("Display window closed, stopping monitoring")
+                    logger.info("表示ウィンドウが閉じられました。監視を停止します")
+            
+            # Log results (結果をログ出力)
+            for i, detection in enumerate(detections):
+                position = positions[i] if i < len(positions) else None
+                action = actions[i] if i < len(actions) else None
+                logger.debug(f"Detection: confidence={detection.confidence:.2f}, "
+                           f"position={position}, action={action}")
+                logger.debug(f"検出: 信頼度={detection.confidence:.2f}, "
+                           f"位置={position}, 行動={action}")
                 
         except Exception as e:
             logger.warning(f"Frame processing error: {e}")
@@ -253,6 +315,10 @@ class MonitoringCoordinator:
         # Stop all components (すべてのコンポーネントを停止)
         if self.camera:
             self.camera.stop()
+        
+        # Clean up display resources (表示リソースのクリーンアップ)
+        if self.display:
+            self.display.cleanup()
         
         # Calculate final statistics (最終統計を計算)
         total_time = time.time() - self.stats["start_time"]

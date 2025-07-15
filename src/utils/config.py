@@ -51,6 +51,17 @@ class ActionConfig:
 
 
 @dataclass
+class DisplayConfig:
+    """Display configuration."""
+    mode: str = "none"  # "none", "window", "headless"
+    window_name: str = "Laboratory Monitoring System"
+    show_fps: bool = True
+    show_detection_count: bool = True
+    show_position_info: bool = True
+    show_action_info: bool = True
+
+
+@dataclass
 class SystemConfig:
     """System configuration."""
     display_enabled: bool = True
@@ -67,6 +78,7 @@ class Config:
     detection: DetectionConfig
     position: PositionConfig
     action: ActionConfig
+    display: DisplayConfig
     system: SystemConfig
 
     @classmethod
@@ -122,6 +134,7 @@ class Config:
                 detection=DetectionConfig(**data.get("detection", {})),
                 position=PositionConfig(**data.get("position", {})),
                 action=ActionConfig(**data.get("action", {})),
+                display=DisplayConfig(**data.get("display", {})),
                 system=SystemConfig(**data.get("system", {}))
             )
         except Exception as e:
@@ -144,6 +157,7 @@ class Config:
             detection=DetectionConfig(),
             position=PositionConfig(),
             action=ActionConfig(),
+            display=DisplayConfig(),
             system=SystemConfig()
         )
     
@@ -161,6 +175,7 @@ class Config:
             "detection": asdict(self.detection),
             "position": asdict(self.position),
             "action": asdict(self.action),
+            "display": asdict(self.display),
             "system": asdict(self.system)
         }
     
@@ -230,6 +245,14 @@ def create_sample_config() -> Config:
         action=ActionConfig(
             use_pose=True,
             confidence_threshold=0.3
+        ),
+        display=DisplayConfig(
+            mode="window",
+            window_name="Laboratory Monitoring System",
+            show_fps=True,
+            show_detection_count=True,
+            show_position_info=True,
+            show_action_info=True
         ),
         system=SystemConfig(
             display_enabled=True,

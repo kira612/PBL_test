@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: pbl_monitoring_system_windows
+    volumes:
+      - .:/app
+    environment:
+      - PYTHONPATH=/app
+      - PYTHONUNBUFFERED=1
+    working_dir: /app
+    ports:
+      - "8000:8000"
+    # Windows camera access via DirectShow
+    privileged: true
+    stdin_open: true
+    tty: true
+    command: bash
+    # Note: Windows containers have different camera access methods
+    # We'll test using OpenCV with DirectShow backend

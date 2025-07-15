@@ -458,6 +458,37 @@ class ActionRecognizer:
         self.use_pose = use_pose
         self.pose_recognizer = PoseActionRecognizer()
         self.bbox_recognizer = BBoxActionRecognizer()
+        self.is_initialized = False
+        
+    def initialize(self) -> bool:
+        """
+        Initialize action recognizer components.
+        (行動認識器のコンポーネントを初期化)
+        
+        Returns:
+            bool: True if initialization successful (初期化成功時True)
+        """
+        try:
+            logger.info("Initializing action recognizer")
+            logger.info("行動認識器を初期化中")
+            
+            # Initialize pose recognizer if enabled
+            if self.use_pose:
+                logger.info("Pose-based action recognition enabled")
+                logger.info("ポーズベース行動認識が有効です")
+            else:
+                logger.info("Bounding box-based action recognition enabled")
+                logger.info("バウンディングボックスベース行動認識が有効です")
+            
+            self.is_initialized = True
+            logger.info("Action recognizer initialized successfully")
+            logger.info("行動認識器の初期化が完了しました")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Failed to initialize action recognizer: {e}")
+            logger.error(f"行動認識器の初期化に失敗しました: {e}")
+            return False
         
     def recognize_actions(
         self, 

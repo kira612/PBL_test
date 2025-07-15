@@ -66,14 +66,20 @@ python main.py
 
 ### 3.1 標準実行
 ```bash
-# デフォルト設定で実行
+# デフォルト設定で実行（表示なし）
 python main.py
 
-# カメラIDを指定
-python main.py --camera-id 1
+# ウィンドウ表示で実行
+python main.py --display window
+
+# ウィンドウ表示でFPSと詳細情報を表示
+python main.py --display window --show-fps --show-info
+
+# カメラIDを指定してウィンドウ表示
+python main.py --camera-id 1 --display window
 
 # デバッグモードで実行
-python main.py --debug
+python main.py --debug --display window
 ```
 
 ### 3.2 コマンドラインオプション
@@ -84,13 +90,29 @@ python main.py [OPTIONS]
   --camera-id INTEGER     カメラデバイスID (デフォルト: 0)
   --debug                 デバッグモードを有効化
   --config PATH          設定ファイルのパス
+  --display [none|window|headless]  表示モード (デフォルト: none)
+  --show-fps             FPSカウンターを表示
+  --show-info            検出・位置情報を表示
   --help                 ヘルプメッセージを表示
 ```
 
 ### 3.3 実行中の操作
-- **'q'キー**: システム終了
-- **'s'キー**: スクリーンショット保存（実装予定）
-- **'r'キー**: システム統計リセット（実装予定）
+
+#### コマンドライン操作
+- **Ctrl+C**: システム終了
+
+#### ディスプレイウィンドウ操作（--display window時）
+- **ESCキー**: ウィンドウを閉じてシステム終了
+- **ウィンドウ×ボタン**: ウィンドウを閉じてシステム終了
+
+#### 表示される情報
+- **バウンディングボックス**: 検出された人物の周囲に表示
+- **信頼度**: 検出の信頼度（0.0-1.0）
+- **位置情報**: 部屋内での推定位置（x, y座標とメートル単位の距離）
+- **行動情報**: 検出された行動（立つ/座る/コンピューター操作/歩行など）
+- **FPS**: フレームレート（--show-fps使用時）
+- **検出数**: 現在のフレームでの検出数
+- **部屋レイアウト**: 右下に表示される部屋の俯瞰図と位置マーカー
 
 ---
 
@@ -129,6 +151,15 @@ action:
   use_pose: true
   confidence_threshold: 0.3
 
+# 表示設定
+display:
+  mode: "window"  # "none", "window", "headless"
+  window_name: "Laboratory Monitoring System"
+  show_fps: true
+  show_detection_count: true
+  show_position_info: true
+  show_action_info: true
+
 # システム設定
 system:
   display_enabled: true
@@ -163,6 +194,14 @@ system:
   "action": {
     "use_pose": true,
     "confidence_threshold": 0.3
+  },
+  "display": {
+    "mode": "window",
+    "window_name": "Laboratory Monitoring System",
+    "show_fps": true,
+    "show_detection_count": true,
+    "show_position_info": true,
+    "show_action_info": true
   },
   "system": {
     "display_enabled": true,

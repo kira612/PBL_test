@@ -66,10 +66,11 @@ This document contains critical information about working with this codebase. Fo
 ## Core Development Rules（コア開発ルール）
 
 1. Package Management（パッケージ管理）
-   - Use pip for package management（パッケージ管理にはpipを使用）
-   - Installation: `pip install package`（インストール）
-   - Development dependencies: `pip install -r requirements-dev.txt`（開発依存関係）
-   - Production dependencies: `pip install -r requirements.txt`（本番依存関係）
+   - Use conda environment for package management（パッケージ管理にはconda環境を使用）
+   - Environment activation: `conda activate pbl_test`（環境のアクティベート）
+   - Package installation: `pip install package` (within conda environment)（パッケージインストール（conda環境内で））
+   - Development dependencies: `pip install -r requirements-conda.txt`（開発依存関係）
+   - Production dependencies: `pip install -r requirements-conda.txt`（本番依存関係）
 
 2. Code Quality（コード品質）
    - Type hints required for all code（すべてのコードに型ヒントが必要）
@@ -85,37 +86,40 @@ This document contains critical information about working with this codebase. Fo
    - New features require tests（新機能にはテストが必要）
    - Bug fixes require regression tests（バグ修正には回帰テストが必要）
 
-## Docker Environment（Docker環境）
+## Anaconda Environment（Anaconda環境）
 
-- Development is done inside Docker containers（開発はDockerコンテナ内で行う）
+- Development is done inside Anaconda conda environment（開発はAnacondaのconda環境内で行う）
 - Main commands:（主なコマンド）
   ```bash
-  # Start development environment（開発環境の開始）
-  docker-compose up -d
+  # Activate development environment（開発環境のアクティベート）
+  conda activate pbl_test
   
   # Run application（アプリケーションの実行）
-  docker-compose exec app python main.py
+  python main.py
   
   # Run tests（テストの実行）
-  docker-compose exec app python -m pytest
+  python -m pytest
   
-  # Access container shell（コンテナシェルへのアクセス）
-  docker-compose exec app bash
+  # Install packages（パッケージのインストール）
+  pip install -r requirements-conda.txt
+  
+  # Deactivate environment（環境の非アクティベート）
+  conda deactivate
   ```
 
 ## Code Formatting（コードフォーマット）
 
 1. Ruff
-   - Format: `python -m ruff format .`（フォーマット）
-   - Check: `python -m ruff check .`（チェック）
-   - Fix: `python -m ruff check . --fix`（修正）
+   - Format: `ruff format .`（フォーマット）
+   - Check: `ruff check .`（チェック）
+   - Fix: `ruff check . --fix`（修正）
    - Critical issues:（重要な問題）
      - Line length (88 chars)（行の長さ88文字）
      - Import sorting (I001)（インポートソート）
      - Unused imports（未使用のインポート）
 
 2. Type Checking（型チェック）
-   - Tool: `python -m pyright`（ツール）
+   - Tool: `pyright`（ツール）
    - Requirements:（要件）
      - Explicit None checks for Optional（OptionalにはNoneチェックを明示）
      - Type narrowing for strings（文字列の型絞り込み）

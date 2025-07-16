@@ -12,12 +12,12 @@ import cv2
 import numpy as np
 from loguru import logger
 
-from .camera import CameraManager
-from .detector import PersonDetector, DetectionMethod
-from ..vision.position_estimator import PositionEstimator, PositionMethod, RoomDimensions
-from ..vision.action_recognizer import ActionRecognizer
-from ..visualization.display import MonitoringDisplay, DisplayConfig, create_display_config
-from ..utils.config import Config
+from ..camera.manager import CameraManager
+from ..detection.detector import PersonDetector, DetectionMethod
+from ..position_estimation.estimator import PositionEstimator, PositionMethod, RoomDimensions
+from ..action_recognition.recognizer import ActionRecognizer
+from .display.display import MonitoringDisplay, DisplayConfig, create_display_config
+from ..config.config import Config
 
 
 class MonitoringCoordinator:
@@ -242,7 +242,7 @@ class MonitoringCoordinator:
                     x, y, w, h = detection.bbox
                     center_x = x + w / 2
                     center_y = y + h / 2
-                    from ..vision.position_estimator import RoomPosition
+                    from ..position_estimation.estimator import RoomPosition
                     default_position = RoomPosition(
                         x=center_x / frame.shape[1] * self.config.room.width,
                         y=center_y / frame.shape[0] * self.config.room.height,
@@ -253,12 +253,12 @@ class MonitoringCoordinator:
             
             # Action recognition for all detections (全検出の行動認識)
             try:
-                actions = self.action_recognizer.recognize_actions(detections, frame)
+                actions = self.action_recognizer.recognize_actions(detections, None, frame.shape[:2])
             except Exception as e:
                 logger.warning(f"Action recognition failed: {e}")
                 logger.warning(f"行動認識に失敗しました: {e}")
                 # Create default actions if recognition fails
-                from ..vision.action_recognizer import ActionResult, ActionType
+                from ..action_recognition.recognizer import ActionResult, ActionType
                 actions = []
                 for detection in detections:
                     default_action = ActionResult(

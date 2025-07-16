@@ -15,18 +15,18 @@ graph TB
     end
 
     subgraph "Core Processing Layer"
-        CameraManager[カメラ管理<br/>Camera Manager]
-        PersonDetector[人物検出<br/>Person Detector]
-        PositionEstimator[位置推定<br/>Position Estimator]
-        ActionRecognizer[行動認識<br/>Action Recognizer]
+        CameraManager[カメラ管理<br/>src/camera/manager.py]
+        PersonDetector[人物検出<br/>src/detection/detector.py]
+        PositionEstimator[位置推定<br/>src/position_estimation/estimator.py]
+        ActionRecognizer[行動認識<br/>src/action_recognition/recognizer.py]
     end
 
     subgraph "Visualization Layer"
-        MonitoringDisplay[監視表示<br/>Monitoring Display]
+        MonitoringDisplay[監視表示<br/>src/monitoring/display/display.py]
     end
 
     subgraph "Coordination Layer"
-        Coordinator[システム統合<br/>Monitoring Coordinator]
+        Coordinator[システム統合<br/>src/monitoring/coordinator.py]
     end
 
     subgraph "Output Layer"
@@ -71,18 +71,19 @@ graph LR
 ```
 
 **主要機能:**
-- カメラデバイスの初期化と管理
+- カメラデバイスの初期化と管理 (`src/camera/manager.py`)
 - フレーム取得とバッファリング
-- 複数カメラの同期管理
+- 複数カメラの同期管理 (`src/camera/multi_camera/`)
 - 統計情報の収集
+- カメラドライバ管理 (`src/camera/drivers/`)
 
 ### 2. 人物検出層 (Person Detection Layer)
 
 ```mermaid
 graph TB
     subgraph "Detection Methods"
-        YOLO[YOLO Detector<br/>・高速検出<br/>・バウンディングボックス]
-        MediaPipe[MediaPipe Detector<br/>・姿勢推定<br/>・ランドマーク検出]
+        YOLO[YOLO Detector<br/>src/detection/yolo/<br/>・高速検出<br/>・バウンディングボックス]
+        MediaPipe[MediaPipe Detector<br/>src/detection/mediapipe/<br/>・姿勢推定<br/>・ランドマーク検出]
     end
     
     subgraph "Unified Interface"
@@ -112,9 +113,9 @@ graph TB
 ```mermaid
 graph TB
     subgraph "Position Methods"
-        BBox[BBox Center<br/>・最も軽量<br/>・基本的な精度]
-        Perspective[Perspective Mapping<br/>・高精度<br/>・要較正]
-        Depth[Depth Estimation<br/>・中程度精度<br/>・人物サイズベース]
+        BBox[BBox Center<br/>src/position_estimation/estimator.py<br/>・最も軽量<br/>・基本的な精度]
+        Perspective[Perspective Mapping<br/>src/position_estimation/perspective/<br/>・高精度<br/>・要較正]
+        Depth[Depth Estimation<br/>src/position_estimation/ai_models/<br/>・中程度精度<br/>・人物サイズベース]
     end
     
     subgraph "Room Coordinate System"
@@ -147,8 +148,8 @@ graph TB
 ```mermaid
 graph TB
     subgraph "Recognition Methods"
-        PoseAction[Pose-based Recognition<br/>・関節角度解析<br/>・ランドマーク距離]
-        BBoxAction[BBox-based Recognition<br/>・アスペクト比解析<br/>・移動パターン]
+        PoseAction[Pose-based Recognition<br/>src/action_recognition/pose/<br/>・関節角度解析<br/>・ランドマーク距離]
+        BBoxAction[BBox-based Recognition<br/>src/action_recognition/bbox/<br/>・アスペクト比解析<br/>・移動パターン]
     end
     
     subgraph "Action Types"
@@ -204,10 +205,10 @@ graph TB
 ```mermaid
 graph TB
     subgraph "Display Components"
-        DisplayManager[Display Manager<br/>・ウィンドウ管理<br/>・レンダリング制御]
-        BBoxRenderer[BBox Renderer<br/>・バウンディングボックス描画<br/>・ラベル表示]
-        InfoOverlay[Info Overlay<br/>・FPS表示<br/>・統計情報]
-        RoomLayout[Room Layout<br/>・部屋俯瞰図<br/>・位置マーカー]
+        DisplayManager[Display Manager<br/>src/monitoring/display/display.py<br/>・ウィンドウ管理<br/>・レンダリング制御]
+        BBoxRenderer[BBox Renderer<br/>src/monitoring/display/<br/>・バウンディングボックス描画<br/>・ラベル表示]
+        InfoOverlay[Info Overlay<br/>src/monitoring/display/<br/>・FPS表示<br/>・統計情報]
+        RoomLayout[Room Layout<br/>src/monitoring/display/<br/>・部屋俯瞰図<br/>・位置マーカー]
     end
     
     subgraph "Display Modes"
@@ -251,10 +252,10 @@ graph TB
 ```mermaid
 graph TB
     subgraph "Monitoring Coordinator"
-        Init[システム初期化<br/>Component Initialization]
-        MainLoop[メインループ<br/>Main Processing Loop]
-        Visualize[可視化処理<br/>Visualization]
-        Stats[統計処理<br/>Statistics]
+        Init[システム初期化<br/>src/monitoring/coordinator.py<br/>Component Initialization]
+        MainLoop[メインループ<br/>src/monitoring/coordinator.py<br/>Main Processing Loop]
+        Visualize[可視化処理<br/>src/monitoring/display/<br/>Visualization]
+        Stats[統計処理<br/>src/storage/<br/>Statistics]
     end
     
     subgraph "Data Flow"
@@ -314,7 +315,7 @@ sequenceDiagram
 ```mermaid
 graph LR
     subgraph "Configuration Sources"
-        Default[デフォルト設定]
+        Default[デフォルト設定<br/>src/config/config.py]
         File[設定ファイル<br/>YAML/JSON]
         CLI[コマンドライン引数]
     end
@@ -326,11 +327,11 @@ graph LR
     end
     
     subgraph "System Components"
-        Camera[カメラ設定]
-        Detection[検出設定]
-        Position[位置推定設定]
-        Action[行動認識設定]
-        System[システム設定]
+        Camera[カメラ設定<br/>src/camera/]
+        Detection[検出設定<br/>src/detection/]
+        Position[位置推定設定<br/>src/position_estimation/]
+        Action[行動認識設定<br/>src/action_recognition/]
+        System[システム設定<br/>src/monitoring/]
     end
     
     Default --> Parser
@@ -383,43 +384,43 @@ graph TB
 ### モジュール拡張ポイント
 
 1. **新しい検出アルゴリズム**
-   - `DetectionMethod` Enumに追加
-   - 新しい検出クラスを実装
+   - `DetectionMethod` Enumに追加 (`src/detection/detector.py`)
+   - 新しい検出クラスを実装 (`src/detection/新しい手法/`)
    - `PersonDetector`に統合
 
 2. **新しい位置推定方法**
-   - `PositionMethod` Enumに追加
-   - 新しい推定クラスを実装
+   - `PositionMethod` Enumに追加 (`src/position_estimation/estimator.py`)
+   - 新しい推定クラスを実装 (`src/position_estimation/新しい手法/`)
    - `PositionEstimator`に統合
 
 3. **新しい行動タイプ**
-   - `ActionType` Enumに追加
-   - 認識ロジックを追加
-   - 可視化対応を追加
+   - `ActionType` Enumに追加 (`src/action_recognition/recognizer.py`)
+   - 認識ロジックを追加 (`src/action_recognition/pose/` または `src/action_recognition/bbox/`)
+   - 可視化対応を追加 (`src/monitoring/display/`)
 
 4. **データ保存形式**
-   - 新しい出力フォーマット
-   - データベース連携
-   - クラウド保存
+   - 新しい出力フォーマット (`src/storage/processor.py`)
+   - データベース連携 (`src/storage/local/` または `src/storage/cloud/`)
+   - クラウド保存 (`src/storage/cloud/`)
 
 ### 研究応用展開
 
 ```mermaid
 graph TB
     subgraph "Current System"
-        Basic[基本監視システム<br/>・人物検出<br/>・位置推定<br/>・行動認識]
+        Basic[基本監視システム<br/>src/monitoring/coordinator.py<br/>・人物検出<br/>・位置推定<br/>・行動認識]
     end
     
     subgraph "Phase 2 Extensions"
-        Entry[入退出管理<br/>・顔認識<br/>・ID管理]
-        Analysis[行動分析<br/>・時系列解析<br/>・パターン検出]
-        Multi[マルチカメラ<br/>・3D追跡<br/>・死角対応]
+        Entry[入退出管理<br/>src/monitoring/tracking/<br/>・顔認識<br/>・ID管理]
+        Analysis[行動分析<br/>src/action_recognition/<br/>・時系列解析<br/>・パターン検出]
+        Multi[マルチカメラ<br/>src/camera/multi_camera/<br/>・3D追跡<br/>・死角対応]
     end
     
     subgraph "Research Applications"
-        Workspace[ワークスペース分析<br/>・作業効率測定<br/>・空間利用評価]
-        Safety[安全管理<br/>・異常行動検出<br/>・緊急時対応]
-        Privacy[プライバシー保護<br/>・匿名化処理<br/>・GDPR対応]
+        Workspace[ワークスペース分析<br/>src/monitoring/dashboard/<br/>・作業効率測定<br/>・空間利用評価]
+        Safety[安全管理<br/>src/monitoring/tracker.py<br/>・異常行動検出<br/>・緊急時対応]
+        Privacy[プライバシー保護<br/>src/utils/<br/>・匿名化処理<br/>・GDPR対応]
     end
     
     Basic --> Entry

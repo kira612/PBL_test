@@ -13,7 +13,7 @@ import cv2
 import numpy as np
 from loguru import logger
 
-from ..core.detector import Detection, PersonPose
+from ..detection.detector import Detection, PersonPose
 
 
 class ActionType(Enum):

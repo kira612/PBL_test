@@ -13,9 +13,9 @@ import cv2
 import numpy as np
 from loguru import logger
 
-from ..core.detector import Detection
-from ..vision.position_estimator import RoomPosition
-from ..vision.action_recognizer import ActionResult, ActionType
+from ...detection.detector import Detection
+from ...position_estimation.estimator import RoomPosition
+from ...action_recognition.recognizer import ActionResult, ActionType
 
 
 class DisplayMode(Enum):
@@ -98,7 +98,7 @@ class MonitoringDisplay:
         try:
             if self.config.mode == DisplayMode.WINDOW:
                 # Create window for visualization
-                cv2.namedWindow(self.config.window_name, cv2.WINDOW_RESIZABLE)
+                cv2.namedWindow(self.config.window_name, cv2.WINDOW_NORMAL)
                 cv2.resizeWindow(self.config.window_name, 
                                self.config.window_width, 
                                self.config.window_height)

@@ -16,7 +16,7 @@
 ---
 
 ## 1. カメラモジュール (Camera Module)
-**ファイル**: `src/core/camera.py`
+**ファイル**: `src/camera/manager.py`
 
 ### 1.1 CameraManager クラス
 
@@ -180,7 +180,7 @@ def stop_all(self) -> None:
 ---
 
 ## 2. 検出モジュール (Detection Module)
-**ファイル**: `src/core/detector.py`
+**ファイル**: `src/detection/detector.py`
 
 ### 2.1 データクラス
 
@@ -355,7 +355,7 @@ def visualize_detections(self, frame: np.ndarray, results: Dict[str, Any]) -> np
 ---
 
 ## 3. 位置推定モジュール (Position Estimation Module)
-**ファイル**: `src/vision/position_estimator.py`
+**ファイル**: `src/position_estimation/estimator.py`
 
 ### 3.1 データクラス
 
@@ -557,12 +557,309 @@ def get_room_occupancy_map(self, positions: List[RoomPosition]) -> np.ndarray:
 **戻り値:**
 - `np.ndarray`: 占有マップ (10cm解像度)
 
+### 3.6 PositionEstimationManager クラス
+
+複数の位置推定手法を統合管理するクラス。
+
+**ファイル**: `src/position_estimation/manager.py`
+
+#### コンストラクタ
+```python
+def __init__(
+    self,
+    method: PositionMethod = PositionMethod.BBOX_CENTER,
+    room_dimensions: Optional[RoomDimensions] = None,
+    frame_width: int = 640,
+    frame_height: int = 480
+):
+```
+**引数:**
+- `method` (PositionMethod): 位置推定手法
+- `room_dimensions` (Optional[RoomDimensions]): 部屋の寸法
+- `frame_width` (int): フレーム幅
+- `frame_height` (int): フレーム高さ
+
+**戻り値:** なし
+
+#### メソッド
+
+##### estimate_positions()
+```python
+def estimate_positions(
+    self, 
+    detections: List[Detection], 
+    frame: Optional[np.ndarray] = None
+) -> List[RoomPosition]:
+```
+**説明:** 複数の検出結果に対して位置推定を実行します。
+
+**引数:**
+- `detections` (List[Detection]): 人物検出結果のリスト
+- `frame` (Optional[np.ndarray]): 入力フレーム（一部手法で必要）
+
+**戻り値:**
+- `List[RoomPosition]`: 推定された部屋内位置のリスト
+
+##### visualize_positions()
+```python
+def visualize_positions(
+    self, 
+    frame: np.ndarray, 
+    detections: List[Detection], 
+    positions: List[RoomPosition]
+) -> np.ndarray:
+```
+**説明:** 推定位置をフレーム上に可視化します。
+
+**引数:**
+- `frame` (np.ndarray): 入力画像フレーム
+- `detections` (List[Detection]): 検出結果
+- `positions` (List[RoomPosition]): 推定位置
+
+**戻り値:**
+- `np.ndarray`: 可視化済みフレーム
+
+##### get_room_occupancy_map()
+```python
+def get_room_occupancy_map(self, positions: List[RoomPosition]) -> np.ndarray:
+```
+**説明:** 位置情報から部屋の占有マップを生成します。
+
+**引数:**
+- `positions` (List[RoomPosition]): 部屋内位置のリスト
+
+**戻り値:**
+- `np.ndarray`: 占有マップ (10cm解像度)
+
+##### change_method()
+```python
+def change_method(self, new_method: PositionMethod) -> bool:
+```
+**説明:** 位置推定手法を変更します。
+
+**引数:**
+- `new_method` (PositionMethod): 新しい位置推定手法
+
+**戻り値:**
+- `bool`: 成功状態 (True: 成功, False: 失敗)
+
+##### get_statistics()
+```python
+def get_statistics(self) -> Dict[str, Any]:
+```
+**説明:** 推定統計情報を取得します。
+
+**引数:** なし
+
+**戻り値:**
+- `Dict[str, Any]`: 統計情報辞書
+  - `method` (str): 使用中の推定手法
+  - `requires_frame` (bool): フレームが必要かどうか
+  - `room_dimensions` (dict): 部屋の寸法情報
+  - `frame_size` (dict): フレームサイズ情報
+  - `estimation_stats` (dict): 推定統計情報
+
+#### プロパティ
+
+##### requires_frame
+```python
+@property
+def requires_frame(self) -> bool:
+```
+**説明:** 現在の推定器がフレームデータを必要とするかどうかを示します。
+
+**戻り値:**
+- `bool`: フレームが必要な場合True
+
+##### current_method
+```python
+@property
+def current_method(self) -> PositionMethod:
+```
+**説明:** 現在の位置推定手法を取得します。
+
+**戻り値:**
+- `PositionMethod`: 現在の位置推定手法
+
+### 3.7 MediaPipePoseEstimator クラス
+
+MediaPipeポーズ推定を使用した位置推定クラス。
+
+**ファイル**: `src/position_estimation/pose/mediapipe_estimator.py`
+
+#### コンストラクタ
+```python
+def __init__(self, room_dimensions: RoomDimensions, frame_width: int, frame_height: int):
+```
+**引数:**
+- `room_dimensions` (RoomDimensions): 部屋の寸法
+- `frame_width` (int): フレーム幅
+- `frame_height` (int): フレーム高さ
+
+**戻り値:** なし
+
+#### メソッド
+
+##### estimate_position()
+```python
+def estimate_position(self, detection: Detection, frame: np.ndarray) -> Optional[RoomPosition]:
+```
+**説明:** MediaPipeポーズランドマークを使用して部屋内位置を推定します。
+
+**引数:**
+- `detection` (Detection): 人物検出結果
+- `frame` (np.ndarray): ポーズ推定用の入力フレーム
+
+**戻り値:**
+- `Optional[RoomPosition]`: 推定された部屋内位置またはNone
+
+#### プロパティ
+
+##### method_name
+```python
+@property
+def method_name(self) -> str:
+```
+**説明:** 推定手法名を取得します。
+
+**戻り値:**
+- `str`: "mediapipe_pose"
+
+##### requires_frame
+```python
+@property
+def requires_frame(self) -> bool:
+```
+**説明:** この推定器がフレームデータを必要とするかどうかを示します。
+
+**戻り値:**
+- `bool`: True (MediaPipeはフレームが必要)
+
+### 3.8 MiDaSDepthEstimator クラス
+
+MiDaS深度推定を使用した位置推定クラス。
+
+**ファイル**: `src/position_estimation/ai_models/midas_estimator.py`
+
+#### コンストラクタ
+```python
+def __init__(self, room_dimensions: RoomDimensions, frame_width: int, frame_height: int):
+```
+**引数:**
+- `room_dimensions` (RoomDimensions): 部屋の寸法
+- `frame_width` (int): フレーム幅
+- `frame_height` (int): フレーム高さ
+
+**戻り値:** なし
+
+#### メソッド
+
+##### estimate_position()
+```python
+def estimate_position(self, detection: Detection, frame: np.ndarray) -> Optional[RoomPosition]:
+```
+**説明:** MiDaS深度推定を使用して部屋内位置を推定します。
+
+**引数:**
+- `detection` (Detection): 人物検出結果
+- `frame` (np.ndarray): 深度推定用の入力フレーム
+
+**戻り値:**
+- `Optional[RoomPosition]`: 推定された部屋内位置またはNone
+
+#### プロパティ
+
+##### method_name
+```python
+@property
+def method_name(self) -> str:
+```
+**説明:** 推定手法名を取得します。
+
+**戻り値:**
+- `str`: "midas_depth"
+
+##### requires_frame
+```python
+@property
+def requires_frame(self) -> bool:
+```
+**説明:** この推定器がフレームデータを必要とするかどうかを示します。
+
+**戻り値:**
+- `bool`: True (MiDaSはフレームが必要)
+
+### 3.9 DPTDepthEstimator クラス
+
+DPT深度推定を使用した位置推定クラス。
+
+**ファイル**: `src/position_estimation/ai_models/dpt_estimator.py`
+
+#### コンストラクタ
+```python
+def __init__(self, room_dimensions: RoomDimensions, frame_width: int, frame_height: int):
+```
+**引数:**
+- `room_dimensions` (RoomDimensions): 部屋の寸法
+- `frame_width` (int): フレーム幅
+- `frame_height` (int): フレーム高さ
+
+**戻り値:** なし
+
+#### メソッド
+
+##### estimate_position()
+```python
+def estimate_position(self, detection: Detection, frame: np.ndarray) -> Optional[RoomPosition]:
+```
+**説明:** DPT深度推定を使用して部屋内位置を推定します。
+
+**引数:**
+- `detection` (Detection): 人物検出結果
+- `frame` (np.ndarray): 深度推定用の入力フレーム
+
+**戻り値:**
+- `Optional[RoomPosition]`: 推定された部屋内位置またはNone
+
+#### プロパティ
+
+##### method_name
+```python
+@property
+def method_name(self) -> str:
+```
+**説明:** 推定手法名を取得します。
+
+**戻り値:**
+- `str`: "dpt_depth"
+
+##### requires_frame
+```python
+@property
+def requires_frame(self) -> bool:
+```
+**説明:** この推定器がフレームデータを必要とするかどうかを示します。
+
+**戻り値:**
+- `bool`: True (DPTはフレームが必要)
+
 ---
 
 ## 4. 行動認識モジュール (Action Recognition Module)
-**ファイル**: `src/vision/action_recognizer.py`
+**ファイル**: `src/action_recognition/recognizer.py`
 
 ### 4.1 データクラス
+
+#### ActionType
+```python
+class ActionType(Enum):
+    STANDING = "standing"
+    SITTING = "sitting"
+    COMPUTER_INTERACTION = "computer_interaction"
+    WALKING = "walking"
+    UNKNOWN = "unknown"
+```
+**説明:** 行動タイプを定義する列挙型。
 
 #### ActionResult
 ```python
@@ -644,6 +941,17 @@ def __init__(self, use_pose: bool = True):
 
 #### メソッド
 
+##### initialize()
+```python
+def initialize(self) -> bool:
+```
+**説明:** 行動認識器のコンポーネントを初期化します。
+
+**引数:** なし
+
+**戻り値:**
+- `bool`: 初期化成功時True、失敗時False
+
 ##### recognize_actions()
 ```python
 def recognize_actions(
@@ -685,7 +993,7 @@ def visualize_actions(
 ---
 
 ## 5. 可視化モジュール (Visualization Module)
-**ファイル**: `src/visualization/display.py`
+**ファイル**: `src/monitoring/display/display.py`
 
 ### 5.1 MonitoringDisplay クラス
 
@@ -802,7 +1110,7 @@ def create_display_config(
 ---
 
 ## 6. システム統合モジュール (System Coordinator Module)
-**ファイル**: `src/core/coordinator.py`
+**ファイル**: `src/monitoring/coordinator.py`
 
 ### 6.1 MonitoringCoordinator クラス
 
@@ -883,7 +1191,7 @@ def get_system_stats(self) -> Dict[str, Any]:
 ---
 
 ## 7. 設定管理モジュール (Configuration Module)
-**ファイル**: `src/utils/config.py`
+**ファイル**: `src/config/config.py`
 
 ### 7.1 設定データクラス
 
@@ -1065,9 +1373,9 @@ def create_sample_config() -> Config:
 
 ### 基本的な使用例
 ```python
-from src.core.coordinator import MonitoringCoordinator
-from src.core.detector import DetectionMethod
-from src.vision.position_estimator import PositionMethod
+from src.monitoring.coordinator import MonitoringCoordinator
+from src.detection.detector import DetectionMethod
+from src.position_estimation.estimator import PositionMethod
 
 # システム初期化
 coordinator = MonitoringCoordinator(
@@ -1084,8 +1392,8 @@ await coordinator.start_monitoring()
 ### 設定ファイルを使用した例
 ```python
 from pathlib import Path
-from src.utils.config import Config
-from src.core.coordinator import MonitoringCoordinator
+from src.config.config import Config
+from src.monitoring.coordinator import MonitoringCoordinator
 
 # 設定読み込み
 config = Config.from_file(Path("config.yaml"))

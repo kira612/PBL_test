@@ -13,7 +13,7 @@ from enum import Enum
 
 import numpy as np
 
-from .detector import Detection
+from ..detection.detector import Detection
 
 
 class PositionMethod(Enum):

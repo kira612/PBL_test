@@ -115,10 +115,10 @@ async def run_monitoring_system(camera_id: int, config: Optional[Path],
     Run the main monitoring system loop.
     (メイン監視システムループの実行)
     """
-    from src.core.coordinator import MonitoringCoordinator
-    from src.core.detector import DetectionMethod
-    from src.vision.position_estimator import PositionMethod
-    from src.visualization.display import create_display_config
+    from src.monitoring.coordinator import MonitoringCoordinator
+    from src.detection.detector import DetectionMethod
+    from src.position_estimation.estimator import PositionMethod
+    from src.monitoring.display.display import create_display_config
     
     logger.info("Monitoring system is running...")
     logger.info("監視システムが実行中です...")

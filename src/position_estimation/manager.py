@@ -11,8 +11,8 @@ import cv2
 import numpy as np
 from loguru import logger
 
-from ..core.detector import Detection
-from ..core.position_interface import (
+from ..detection.detector import Detection
+from .interface import (
     PositionMethod, 
     RoomPosition, 
     RoomDimensions, 
@@ -20,14 +20,14 @@ from ..core.position_interface import (
 )
 
 # Import position estimators
-from .position_perspective import (
+from .perspective.perspective import (
     BBoxCenterEstimator,
     PerspectiveMappingEstimator,
     DepthEstimationEstimator
 )
-from .position_mediapipe import MediaPipePoseEstimator
-from .position_midas import MiDaSDepthEstimator
-from .position_dpt import DPTDepthEstimator
+from .ai_models.mediapipe import MediaPipePoseEstimator
+from .ai_models.midas import MiDaSDepthEstimator
+from .ai_models.dpt import DPTDepthEstimator
 
 
 class PositionEstimationManager:

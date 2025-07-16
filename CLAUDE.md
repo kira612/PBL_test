@@ -172,8 +172,66 @@ PBL_test/
 ├── docker-compose.yml  # Docker Compose setup（Docker Compose設定）
 ├── requirements.txt    # Python dependencies（Python依存関係）
 ├── main.py            # Main application（メインアプリケーション）
+├── docs/              # Documentation（ドキュメント）
+│   ├── API_Documentation.md    # API specifications（API仕様書）
+│   ├── Usage_Guide.md          # Usage guide（使用ガイド）
+│   └── System_Architecture.md  # System architecture（システム構成図）
 └── src/               # Source code（ソースコード）
-    └── (module files) # （モジュールファイル）
+    ├── action_recognition/     # Action recognition system（行動認識システム）
+    │   ├── bbox/              # BBox-based action recognition（BBox基盤行動認識）
+    │   ├── pose/              # Pose-based action recognition（姿勢基盤行動認識）
+    │   ├── recognizer.py      # Action recognizer main module（行動認識メインモジュール）
+    │   └── mediapipe_handler.py  # MediaPipe utilities（MediaPipeユーティリティ）
+    ├── algorithms/            # Algorithm implementations（アルゴリズム実装）
+    ├── api/                  # API endpoints（APIエンドポイント）
+    ├── camera/               # Camera management（カメラ管理）
+    │   ├── drivers/          # Camera drivers（カメラドライバー）
+    │   ├── multi_camera/     # Multi-camera support（マルチカメラサポート）
+    │   └── manager.py        # Camera manager（カメラマネージャー）
+    ├── config/               # Configuration management（設定管理）
+    │   └── config.py         # Configuration loader（設定ローダー）
+    ├── detection/            # Person detection（人物検出）
+    │   ├── yolo/             # YOLO-based detection（YOLO基盤検出）
+    │   ├── mediapipe/        # MediaPipe-based detection（MediaPipe基盤検出）
+    │   └── detector.py       # Person detector main module（人物検出メインモジュール）
+    ├── hardware/             # Hardware interfaces（ハードウェアインターフェース）
+    ├── models/               # Data models（データモデル）
+    │   └── models.py         # Core data structures（コアデータ構造）
+    ├── monitoring/           # Monitoring system（監視システム）
+    │   ├── dashboard/        # Dashboard components（ダッシュボードコンポーネント）
+    │   │   ├── dashboard.py  # Main dashboard（メインダッシュボード）
+    │   │   └── statistics.py # Statistics display（統計表示）
+    │   ├── display/          # Display components（表示コンポーネント）
+    │   │   ├── display.py    # Main display module（メイン表示モジュール）
+    │   │   └── stream_viewer.py  # Stream viewer（ストリームビューアー）
+    │   ├── coordinator.py    # System coordinator（システムコーディネーター）
+    │   └── tracker.py        # Object tracker（オブジェクトトラッカー）
+    ├── position_estimation/  # Position estimation（位置推定）
+    │   ├── ai_models/        # AI-based position estimation（AI基盤位置推定）
+    │   │   ├── mediapipe.py  # MediaPipe position estimation（MediaPipe位置推定）
+    │   │   ├── midas.py      # MiDaS depth estimation（MiDaS深度推定）
+    │   │   └── dpt.py        # DPT depth estimation（DPT深度推定）
+    │   ├── depth/            # Depth-based estimation（深度基盤推定）
+    │   ├── perspective/      # Perspective-based estimation（透視変換基盤推定）
+    │   │   └── perspective.py  # Perspective transformation（透視変換）
+    │   ├── estimator.py      # Position estimator main module（位置推定メインモジュール）
+    │   ├── interface.py      # Position estimation interfaces（位置推定インターフェース）
+    │   └── manager.py        # Position estimation manager（位置推定マネージャー）
+    ├── storage/              # Data storage（データストレージ）
+    │   ├── local/            # Local storage（ローカルストレージ）
+    │   ├── cloud/            # Cloud storage（クラウドストレージ）
+    │   ├── processor.py      # Data processor（データプロセッサー）
+    │   └── storage.py        # Storage manager（ストレージマネージャー）
+    ├── tests/                # Test suite（テストスイート）
+    │   ├── test_detector.py  # Detection tests（検出テスト）
+    │   ├── test_position_estimator.py  # Position estimation tests（位置推定テスト）
+    │   └── test_tracker.py   # Tracker tests（トラッカーテスト）
+    ├── ui/                   # User interfaces（ユーザーインターフェース）
+    │   ├── web/              # Web interface（Webインターフェース）
+    │   └── desktop/          # Desktop interface（デスクトップインターフェース）
+    └── utils/                # Utility functions（ユーティリティ関数）
+        ├── helpers.py        # Helper functions（ヘルパー関数）
+        └── logger.py         # Logging utilities（ログユーティリティ）
 ```
 
 ## Git Workflow（Gitワークフロー）

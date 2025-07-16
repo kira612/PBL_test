@@ -14,7 +14,7 @@ import cv2
 import numpy as np
 from loguru import logger
 
-from ..core.detector import Detection
+from ..detection.detector import Detection
 
 # Optional imports for advanced features
 try:

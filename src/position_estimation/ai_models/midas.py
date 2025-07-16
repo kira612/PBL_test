@@ -11,8 +11,8 @@ import cv2
 import numpy as np
 from loguru import logger
 
-from ..core.detector import Detection
-from ..core.position_interface import FrameBasedPositionEstimator, RoomPosition, RoomDimensions
+from ...detection.detector import Detection
+from ..interface import FrameBasedPositionEstimator, RoomPosition, RoomDimensions
 
 # Optional imports for PyTorch and MiDaS
 try:

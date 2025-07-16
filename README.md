@@ -165,15 +165,57 @@ action:
 ```
 PBL_test/
 ├── 📁 src/                     # ソースコード
-│   ├── 📁 core/               # コアモジュール
-│   │   ├── camera.py          # カメラ管理
-│   │   ├── detector.py        # 人物検出
-│   │   └── coordinator.py     # システム統合
-│   ├── 📁 vision/             # 視覚処理
-│   │   ├── position_estimator.py  # 位置推定
-│   │   └── action_recognizer.py   # 行動認識
-│   └── 📁 utils/              # ユーティリティ
-│       └── config.py          # 設定管理
+│   ├── 📁 action_recognition/  # 行動認識システム
+│   │   ├── 📁 bbox/           # BBox基盤行動認識
+│   │   ├── 📁 pose/           # 姿勢基盤行動認識
+│   │   ├── recognizer.py      # 行動認識メインモジュール
+│   │   └── mediapipe_handler.py # MediaPipeユーティリティ
+│   ├── 📁 camera/             # カメラ管理システム
+│   │   ├── 📁 drivers/        # カメラドライバー
+│   │   ├── 📁 multi_camera/   # マルチカメラサポート
+│   │   └── manager.py         # カメラマネージャー
+│   ├── 📁 config/             # 設定管理
+│   │   └── config.py          # 設定ローダー
+│   ├── 📁 detection/          # 人物検出システム
+│   │   ├── 📁 yolo/           # YOLO基盤検出
+│   │   ├── 📁 mediapipe/      # MediaPipe基盤検出
+│   │   └── detector.py        # 人物検出メインモジュール
+│   ├── 📁 models/             # データモデル
+│   │   └── models.py          # コアデータ構造
+│   ├── 📁 monitoring/         # 監視システム統合
+│   │   ├── 📁 dashboard/      # ダッシュボード機能
+│   │   │   ├── dashboard.py   # メインダッシュボード
+│   │   │   └── statistics.py  # 統計表示
+│   │   ├── 📁 display/        # 表示コンポーネント
+│   │   │   ├── display.py     # メイン表示モジュール
+│   │   │   └── stream_viewer.py # ストリームビューアー
+│   │   ├── coordinator.py     # システムコーディネーター
+│   │   └── tracker.py         # オブジェクトトラッカー
+│   ├── 📁 position_estimation/ # 位置推定システム
+│   │   ├── 📁 ai_models/      # AI基盤位置推定
+│   │   │   ├── mediapipe.py   # MediaPipe位置推定
+│   │   │   ├── midas.py       # MiDaS深度推定
+│   │   │   └── dpt.py         # DPT深度推定
+│   │   ├── 📁 perspective/    # 透視変換基盤推定
+│   │   │   └── perspective.py # 透視変換
+│   │   ├── estimator.py       # 位置推定メインモジュール
+│   │   ├── interface.py       # 位置推定インターフェース
+│   │   └── manager.py         # 位置推定マネージャー
+│   ├── 📁 storage/            # データストレージ
+│   │   ├── 📁 local/          # ローカルストレージ
+│   │   ├── 📁 cloud/          # クラウドストレージ
+│   │   ├── processor.py       # データプロセッサー
+│   │   └── storage.py         # ストレージマネージャー
+│   ├── 📁 tests/              # テストスイート
+│   │   ├── test_detector.py   # 検出テスト
+│   │   ├── test_position_estimator.py # 位置推定テスト
+│   │   └── test_tracker.py    # トラッカーテスト
+│   ├── 📁 ui/                 # ユーザーインターフェース
+│   │   ├── 📁 web/            # Webインターフェース
+│   │   └── 📁 desktop/        # デスクトップインターフェース
+│   └── 📁 utils/              # ユーティリティ関数
+│       ├── helpers.py         # ヘルパー関数
+│       └── logger.py          # ログユーティリティ
 ├── 📁 docs/                   # ドキュメント
 │   ├── API_Documentation.md   # API仕様書
 │   ├── Usage_Guide.md         # 使用ガイド

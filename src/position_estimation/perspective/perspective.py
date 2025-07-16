@@ -11,8 +11,8 @@ import cv2
 import numpy as np
 from loguru import logger
 
-from ..core.detector import Detection
-from ..core.position_interface import SimplePositionEstimator, RoomPosition, RoomDimensions
+from ...detection.detector import Detection
+from ..interface import SimplePositionEstimator, RoomPosition, RoomDimensions
 
 
 class BBoxCenterEstimator(SimplePositionEstimator):

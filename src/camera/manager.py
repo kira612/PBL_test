@@ -54,8 +54,13 @@ class CameraManager:
             bool: Success status (成功状態)
         """
         try:
-            self.cap = cv2.VideoCapture(self.camera_id)
+            # Try DirectShow backend first on Windows
+            self.cap = cv2.VideoCapture(self.camera_id, cv2.CAP_DSHOW)
             
+            if not self.cap.isOpened():
+                # Fallback to default backend
+                self.cap = cv2.VideoCapture(self.camera_id)
+                
             if not self.cap.isOpened():
                 logger.error(f"Failed to open camera {self.camera_id}")
                 logger.error(f"カメラ {self.camera_id} のオープンに失敗しました")

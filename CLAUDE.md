@@ -182,8 +182,7 @@ PBL_test/
     │   ├── pose/              # Pose-based action recognition（姿勢基盤行動認識）
     │   ├── recognizer.py      # Action recognizer main module（行動認識メインモジュール）
     │   └── mediapipe_handler.py  # MediaPipe utilities（MediaPipeユーティリティ）
-    ├── algorithms/            # Algorithm implementations（アルゴリズム実装）
-    ├── api/                  # API endpoints（APIエンドポイント）
+
     ├── camera/               # Camera management（カメラ管理）
     │   ├── drivers/          # Camera drivers（カメラドライバー）
     │   ├── multi_camera/     # Multi-camera support（マルチカメラサポート）
@@ -194,9 +193,8 @@ PBL_test/
     │   ├── yolo/             # YOLO-based detection（YOLO基盤検出）
     │   ├── mediapipe/        # MediaPipe-based detection（MediaPipe基盤検出）
     │   └── detector.py       # Person detector main module（人物検出メインモジュール）
-    ├── hardware/             # Hardware interfaces（ハードウェアインターフェース）
-    ├── models/               # Data models（データモデル）
-    │   └── models.py         # Core data structures（コアデータ構造）
+
+
     ├── monitoring/           # Monitoring system（監視システム）
     │   ├── dashboard/        # Dashboard components（ダッシュボードコンポーネント）
     │   │   ├── dashboard.py  # Main dashboard（メインダッシュボード）
@@ -226,9 +224,7 @@ PBL_test/
     │   ├── test_detector.py  # Detection tests（検出テスト）
     │   ├── test_position_estimator.py  # Position estimation tests（位置推定テスト）
     │   └── test_tracker.py   # Tracker tests（トラッカーテスト）
-    ├── ui/                   # User interfaces（ユーザーインターフェース）
-    │   ├── web/              # Web interface（Webインターフェース）
-    │   └── desktop/          # Desktop interface（デスクトップインターフェース）
+
     └── utils/                # Utility functions（ユーティリティ関数）
         ├── helpers.py        # Helper functions（ヘルパー関数）
         └── logger.py         # Logging utilities（ログユーティリティ）

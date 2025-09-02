@@ -693,20 +693,6 @@ storage_manager.save_position_data(positions, timestamp)
 processed_data = data_processor.process_session_data(session_data)
 ```
 
-### 5.8 Webインターフェースの使用
-```python
-from src.ui.web import WebInterface
-from src.monitoring.dashboard import DashboardManager
-
-# Webインターフェース初期化
-web_interface = WebInterface(host="0.0.0.0", port=8080)
-
-# ダッシュボードマネージャー
-dashboard = DashboardManager()
-
-# Webサーバー開始
-web_interface.start_server()
-```
 
 ### 5.9 オブジェクト追跡の使用
 ```python
@@ -757,7 +743,7 @@ tracking_stats = tracker.get_statistics()
 - **画像保存**: JPEG形式 - `src/storage/local/`
 - **データ出力**: JSON形式 - `src/storage/processor.py`
 - **統計情報**: ログファイル - `src/utils/logger.py`
-- **Webダッシュボード**: HTML/CSS/JS - `src/ui/web/`
+- **Webダッシュボード**: HTML/CSS/JS - `src/monitoring/dashboard/`
 - **クラウド保存**: クラウドAPI - `src/storage/cloud/`
 
 ---
